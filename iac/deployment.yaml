@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quest
+  namespace: prod
+  labels:
+    app: quest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quest
+  template:
+    metadata:
+      labels:
+        app: quest
+    spec:
+      containers:
+      - name: quest
+        image: joinpickup/quest:$TAG
+        envFrom:
+        - secretRef:
+            name: quest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quest
+  namespace: prod
+spec:
+  ports:
+  - port: 3000
+  selector:
+    app: quest
+
