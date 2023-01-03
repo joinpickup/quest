@@ -76,16 +76,17 @@ export default function Home() {
                               </Button>
                           </div>
                           <div className="flex flex-col space-y-2">
-                            <div className="text-md text-gray-400">
+                            <div className="text-md">
                               We live in an age of endless scrolling. It{"'"}s abundantly clear 
-                              that this behavior has affected our mental health. Thankfully games like wordle
-                              and apps like BeReel have attemted to pull us out of that. This is ours.
+                              that has had negative outcome for our mental mental health and has caused used to feel disconnected from our support system. 
+                              Games like wordle and apps like BeReel have attemted to do it better with daily challenges. 
+                              This is our attempt at that. 
                             </div>
                             <div className="text-xl">
                               How it works?
                             </div>
                             <ul className="flex flex-col space-y-2">
-                              <li className="rounded-lg p-2 bg-gray-600">There is one question each day.</li>
+                              <li className="rounded-lg p-2 bg-gray-600">There is one hand picked question a day.</li>
                               <li className="rounded-lg p-2 bg-gray-600">The day starts with <span className="text-orange-500 italic">1000</span> messages for the entire community.</li>
                               <li className="rounded-lg p-2 bg-gray-600">Anyone can buy messages for the community at <span className="text-orange-500 italic">10 cents</span> a message.</li>
                               <li className="rounded-lg p-2 bg-gray-600">Messages get sent out anonymously at the end of the day.</li>
