@@ -96,17 +96,19 @@ export default function Home() {
               </div>
             </Button>
           </div>
-          <div className="flex md:flex-row flex-col space-x-0 space-y-2 md:space-y-0 md:space-x-2">
+          <div className="flex flex-col space-y-2">
             <div className="flex-1 flex items-center justify-between">
               <div>Community messages left </div>
               <div className="text-2xl text-orange-400">{messages}</div>
             </div>
-            <Button click={() => {
-                setError({active: true, message: "Not implemented yet :( Blame Andrew"})
-            }}>
-              {/* <a href="https://buy.stripe.com/test_4gw3dv1npeFA6Yg7ss" target="_blank" rel="noopener noreferrer" className="text-sm">Add More</a> */}
-              <a className="text-sm" target="_blank" rel="noopener noreferrer" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR">Add More</a>
-            </Button>
+            <a className="text-sm" target="_blank" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR">
+              <Button click={() => {
+              }}>
+                <div>
+                  Add More
+                </div>
+              </Button>
+            </a>
           </div>
         </div>
       </main>
