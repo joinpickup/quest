@@ -76,7 +76,7 @@ export default function Home() {
               type='tel'
               value={phone}
               change={setPhone}
-              placeholder="Enter a phone number"
+              placeholder="Enter their phone number"
             /> 
             <Button 
             type={ButtonType.CONTAINED} 
@@ -105,7 +105,7 @@ export default function Home() {
                 setError({active: true, message: "Not implemented yet :( Blame Andrew"})
             }}>
               {/* <a href="https://buy.stripe.com/test_4gw3dv1npeFA6Yg7ss" target="_blank" rel="noopener noreferrer" className="text-sm">Add More</a> */}
-              <a className="text-sm">Add More</a>
+              <a className="text-sm" target="_blank" rel="noopener noreferrer" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR">Add More</a>
             </Button>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function Home() {
                               causing us to feel disconnected from our support systems. So we created a challenge
                               to help people feel more connected. 
                               <br />
-                              <span className="text-green-300">-The Pickup Team</span>
+                              <span className="text-green-300 italic">-The Pickup Team</span>
                             </div>
                             <div className="text-xl">
                               How it works
@@ -144,8 +144,8 @@ export default function Home() {
                             <ul className="flex flex-col space-y-2">
                               <li className="rounded-lg p-2 bg-gray-600">There is one hand picked question a day.</li>
                               <li className="rounded-lg p-2 bg-gray-600">Enter the person in your life who best matches the question.</li>
-                              <li className="rounded-lg p-2 bg-gray-600">The day starts with <span className="text-orange-500 italic">1000</span> messages for the entire community.</li>
-                              <li className="rounded-lg p-2 bg-gray-600">Anyone can buy messages for the community at <span className="text-orange-500 italic">10 cents</span> a message.</li>
+                              <li className="rounded-lg p-2 bg-gray-600">The day starts with <span className="text-orange-500 italic">1000</span> free messages for the entire community.</li>
+                              <li className="rounded-lg p-2 bg-gray-600">After that anyone can buy messages for the community at <span className="text-orange-500 italic">10 cents</span> a message.</li>
                               <li className="rounded-lg p-2 bg-gray-600">Messages get sent out anonymously at the end of the day.</li>
                             </ul>
                             <div className="text-xl">
