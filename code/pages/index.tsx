@@ -120,12 +120,14 @@ export default function Home() {
               <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 overscroll-x-none overscroll-y-none md:inset-0">
                   <div className="p-4 flex h-full w-screen justify-center m-0 items-center backdrop-blur-lg">
                       <div className="flex p-4 flex-col h-4/5 w-96 rounded-lg bg-gray-700 space-y-4">
-                          <div className="flex items-center justify-end space-x-2">
-                              <div className="flex-1 flex flex-col text-xl">
+                          <div className="flex items-center space-x-2">
+                              <div className="flex-1 w-full flex flex-col text-xl">
                                 <div>What is the Daily Quest</div>
                                 <Badge text='Beta' />
                               </div>
-                              <Button click={() => {
+                              <Button 
+                              className="flex p-2 rounded-lg cursor-pointer justify-center items-center border-2 border-gray-600 hover:bg-gray-600"
+                              click={() => {
                                 setInfo(false)
                               }}>
                                 <div>Close</div>
