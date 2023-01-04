@@ -3,26 +3,35 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "ssl:setup": "node scripts/create-ssl-certs.js",
+    "dev": "NODE_EXTRA_CA_CERTS=\"./ssl/pickup-dev-root.cer.pem\" node scripts/create-local-server.js",
+    "dev:ssl": "concurrently --kill-others \"npm run dev\" \"npm run ssl-proxy\"",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ssl-proxy": "local-ssl-proxy --source 443 --target 3000 --key ./ssl/joinpickup.dev-key.pem --cert ./ssl/joinpickup.dev.pem"
   },
   "dependencies": {
     "@next/font": "13.1.1",
+    "@notionhq/client": "^2.2.3",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",
     "@types/react-dom": "18.0.10",
+    "axios": "^1.2.2",
+    "date-fns": "^2.29.3",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
-    "next": "13.1.1",
+    "next": "^13.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.9.4"
   },
   "devDependencies": {
+    "@stripe/stripe-js": "^1.46.0",
     "autoprefixer": "^10.4.13",
+    "concurrently": "^7.2.2",
     "postcss": "^8.4.20",
+    "stripe": "^11.5.0",
     "tailwindcss": "^3.2.4"
   }
 }
