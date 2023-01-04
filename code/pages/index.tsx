@@ -101,7 +101,7 @@ export default function Home() {
               <div>Community messages left </div>
               <div className="text-2xl text-orange-400">{messages}</div>
             </div>
-            <a className="text-sm" target="_blank" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR">
+            <a className="text-sm" target="_blank" rel="noopener noreferrer" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR">
               <Button click={() => {
               }}>
                 <div>
