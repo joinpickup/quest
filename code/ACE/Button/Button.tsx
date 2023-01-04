@@ -18,7 +18,7 @@ export default function Button({click, children, className, type}: ButtonProps) 
             {
                 (type == undefined || type == null) || type == ButtonType.DEFAULT ? 
                     <button 
-                        className={className ?? "flex p-2 rounded-lg cursor-pointer items-center border-2 border-gray-600 hover:bg-gray-600"}
+                        className={className ?? "flex p-2 rounded-lg cursor-pointer justify-center items-center border-2 border-gray-600 hover:bg-gray-600"}
                         onClick={() => {
                         click()
                     }}>

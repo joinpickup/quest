@@ -6,11 +6,16 @@ import Input from '../ACE/Input/Input'
 import useQuery from '../lib/useQuery'
 
 export default function Home() {
+  // state
   const [phone, setPhone] = useState("")
   const [info, setInfo] = useState(true)
   const [banner, setBanner] = useState(true)
+
+  // data
   const {data: question, loading, error} = useQuery<string>("/api/get_question")
-  
+
+  // router
+  const router = useRouter();
 
   return (
     <>
@@ -24,31 +29,28 @@ export default function Home() {
       {
         info ? <InfoDialog /> : <></>
       }
-      {
-        banner ? 
-          <header className="fixed p-2 w-full flex justify-center items-center space-x-4 rounded-b-lg border-2 border-gray-600">
-            <div>
-              Still in development in the mean time check out <a className="italic cursor-pointer text-orange-400 underline" href="https://joinpickup.com">Pickup</a>
-            </div>
-          </header> : <></>
-      }
-      <main className="flex h-screen w-screen justify-center items-center">
-        <div className="p-4 flex flex-col space-y-2 ">
-          <div className='flex space-x-2'>
+      <main className="flex flex-col h-screen w-screen justify-center items-center">
+        <div className="p-4 flex flex-col justify-between h-4/5 w-4/5 space-y-2 ">
+          <div className="flex md:flex-row flex-col space-x-0 space-y-2 md:space-y-0 md:space-x-2">
+            <Button 
+              click={() => {
+                setInfo(true)
+              }}
+            >
+              <div>The Daily Quest Info</div>
+            </Button>
+            <Button 
+              click={() => {
+                router.push("https://joinpickup.com")
+              }}
+            >
+              <div>Our Other Apps</div>
+            </Button>
+          </div>
+          <div className="flex md:flex-row flex-col space-x-0 space-y-2 md:space-y-0 md:space-x-2">
             <div className="text-3xl">
               {question}
             </div>
-            <div>
-              <Button 
-                click={() => {
-                  setInfo(true)
-                }}
-              >
-                <div>Info</div>
-              </Button>
-            </div>
-          </div>
-          <div className="flex md:flex-row flex-col space-x-0 space-y-2 md:space-y-0 md:space-x-2">
             <Input 
               type='tel'
               value={phone}
@@ -66,7 +68,7 @@ export default function Home() {
               </div>
             </Button>
           </div>
-          <div className="flex items-center w-full">
+          <div className="flex md:flex-row flex-col space-x-0 space-y-2 md:space-y-0 md:space-x-2">
             <div className="flex-1">
               <span className="text-orange-400 italic">1000</span> Community Messages Left
             </div>
@@ -84,9 +86,9 @@ export default function Home() {
   
   function InfoDialog() {
     return (
-              <div className="fixed inset-0 bg-black/60 flex w-screen items-center justify-center h-full z-50 overscroll-x-none overscroll-y-none md:inset-0 h-modal md:h-full">
-                  <div className="p-4 flex w-full h-full justify-center m-0 max-w-lg items-center backdrop-blur-lg">
-                      <div className="flex p-4 flex-col w-full relative rounded-lg max-h-screen bg-gray-700 space-y-4">
+              <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 overscroll-x-none overscroll-y-none md:inset-0">
+                  <div className="p-4 flex h-full w-screen justify-center m-0 items-center backdrop-blur-lg">
+                      <div className="flex p-4 flex-col h-4/5 w-96 rounded-lg bg-gray-700 space-y-4">
                           <div className="flex items-center justify-end">
                               <div className="flex-1 text-xl">
                                 What is the Daily Quest?
