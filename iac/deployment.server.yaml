@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quest-server
+  namespace: prod
+  labels:
+    app: quest-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quest-server
+  template:
+    metadata:
+      labels:
+        app: quest-server
+    spec:
+      containers:
+      - name: quest
+        image: joinpickup/quest-server:$TAG
+        envFrom:
+        - secretRef:
+            name: quest-server
+        env:
+          - name: VERSION
+            value: $VERSION
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quest-server
+  namespace: prod
+spec:
+  ports:
+  - port: 6053
+  selector:
+    app: quest-server
+

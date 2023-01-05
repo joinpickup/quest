@@ -1,0 +1,56 @@
+name: Build and Deploy Web
+
+on: workflow_dispatch
+
+env:
+  DEPLOYMENT: "quest"
+  CLUSTER: "pickup-cluster"
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: joinpickup/quest
+          tags: latest, ${{ github.ref_name }} 
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: ./code/web
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  deploy:
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout Master
+        uses: actions/checkout@main      
+      - name: Install Doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $(echo $CLUSTER)
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: sed -e 's|$TAG|${{ github.event.inputs.version }}|g' -e 's|$STRIKER_VERSION|${{ github.event.inputs.version }}|g' $GITHUB_WORKSPACE/iac/deployment.yaml | kubectl apply -f -
+
+      - name: Verify deployment
+        run: kubectl -n prod rollout status deployment/$(echo $DEPLOYMENT)
+

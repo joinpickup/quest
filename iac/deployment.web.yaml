@@ -21,6 +21,9 @@ spec:
         envFrom:
         - secretRef:
             name: quest
+        env:
+          - name: VERSION
+            value: $VERSION
 ---
 apiVersion: v1
 kind: Service

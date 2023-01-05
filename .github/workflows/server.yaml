@@ -1,10 +1,6 @@
-name: Build and Deploy
+name: Build and Deploy Server
 
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version of the Release"
+on: workflow_dispatch
 
 env:
   DEPLOYMENT: "quest"
@@ -29,12 +25,12 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: joinpickup/quest
-          tags: latest, ${{ github.event.inputs.version }} 
+          tags: latest, ${{ github.ref_name }} 
 
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./code
+          context: ./code/web
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
