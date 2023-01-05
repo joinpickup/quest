@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# SSL Files
+code/server/ssl/*
+
+# Log files
+log.txt

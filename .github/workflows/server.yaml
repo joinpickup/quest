@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - 'v*.*.*'
-    paths:
-      - code/server/**
 
 env:
   DEPLOYMENT: "quest"
@@ -35,7 +33,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./code/web
+          context: ./code/server
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -54,7 +52,7 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $(echo $CLUSTER)
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: sed -e 's|$TAG|${{ github.event.inputs.version }}|g' -e 's|$STRIKER_VERSION|${{ github.event.inputs.version }}|g' $GITHUB_WORKSPACE/iac/deployment.yaml | kubectl apply -f -
+        run: sed -e 's|$TAG|${{ github.ref_name }}|g' -e 's|$VERSION|${{ github.ref_name }}|g' $GITHUB_WORKSPACE/iac/deployment.server.yaml | kubectl apply -f -
 
       - name: Verify deployment
         run: kubectl -n prod rollout status deployment/$(echo $DEPLOYMENT)

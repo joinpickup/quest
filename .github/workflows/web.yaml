@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - 'v*.*.*'
-    paths:
-      - code/web/**
 
 env:
   DEPLOYMENT: "quest"
@@ -54,8 +52,9 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $(echo $CLUSTER)
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: sed -e 's|$TAG|${{ github.event.inputs.version }}|g' -e 's|$STRIKER_VERSION|${{ github.event.inputs.version }}|g' $GITHUB_WORKSPACE/iac/deployment.yaml | kubectl apply -f -
+        run: sed -e 's|$TAG|${{ github.ref_name }}|g' -e 's|$VERSION|${{ github.ref_name }}|g' $GITHUB_WORKSPACE/iac/deployment.server.yaml | kubectl apply -f -
 
       - name: Verify deployment
         run: kubectl -n prod rollout status deployment/$(echo $DEPLOYMENT)
+
 
