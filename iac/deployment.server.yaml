@@ -21,6 +21,8 @@ spec:
         envFrom:
         - secretRef:
             name: quest-server
+        - secretRef:
+            name: middleware
         env:
           - name: VERSION
             value: $VERSION
