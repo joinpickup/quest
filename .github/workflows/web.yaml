@@ -1,6 +1,9 @@
 name: Build and Deploy Web
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    tags:
+      - 'v*.*.*'
 
 env:
   DEPLOYMENT: "quest"
