@@ -29,7 +29,6 @@ export default function Home() {
         <meta name="description" content="A daily challenge to make the lives of the people around you better." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
-        <script defer data-domain="quest.joinpickup.com" src="https://analytics.joinpickup.com/js/script.js"></script>
       </Head>
       {
         info ? <InfoDialog close={() => setInfo(false)}/> : <></>
