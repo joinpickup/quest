@@ -23,7 +23,6 @@ func NewRouter() chi.Router {
 		r.Route("/hermes", func(r chi.Router) {
 			r.Route("/phone", func(r chi.Router) {
 				r.Put("/send", controller.SendPhone)
-				r.Put("/verify", controller.VerifyPhone)
 			})
 		})
 	})
