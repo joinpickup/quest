@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/joho/godotenv/autoload"
 	"github.com/joinpickup/middleware-go/database"
 	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/middleware-go/support"
