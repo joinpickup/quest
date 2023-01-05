@@ -1,3 +1,4 @@
+import { usePlausible } from 'next-plausible'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -15,6 +16,7 @@ export default function Home() {
   const [info, setInfo] = useState(true)
   const [success, setSuccess] = useState({active: false, message: ""})
   const [error, setError] = useState({active: false, message: ""})
+  const plausible = usePlausible();
 
   // data
   const {data: question, loading} = useQuery<string>("/api/get_question")
@@ -62,6 +64,7 @@ export default function Home() {
             </Button>
             <Button 
               click={() => {
+                plausible("other-apps")
                 router.push("https://joinpickup.com?utm_source=daily_quest&utm_medium=link&utm_campaign=daily_quest")
               }}
             >
@@ -87,6 +90,7 @@ export default function Home() {
                 return
               } 
 
+              plausible("send-message")
               setMessages(messages - 1)
               setPhone("")
               setSuccess({active: true, message: "Message submitted."})
@@ -101,7 +105,10 @@ export default function Home() {
               <div>Community messages left </div>
               <div className="text-2xl text-orange-400">{messages}</div>
             </div>
-            <a className="text-sm" target="_blank" rel="noopener noreferrer" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR">
+            <a className="text-sm" target="_blank" rel="noopener noreferrer" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR" onClick={() => {
+              alert("STILL IN DEVELOPMENT: SPENDING MONEY WILL NOT GET YOU ANYTHING")
+              plausible("send-message")
+            }}>
               <Button click={() => {
               }}>
                 <div>
