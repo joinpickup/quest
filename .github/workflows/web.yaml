@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*.*.*'
+    paths:
+      - code/web/**
 
 env:
   DEPLOYMENT: "quest"
