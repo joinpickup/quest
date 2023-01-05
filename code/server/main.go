@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/joinpickup/keeper/app"
 	"github.com/joinpickup/middleware-go/database"
 	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/middleware-go/support"
+	"github.com/joinpickup/quest-server/app"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	logging.SetupLogging()
 
 	// setup variables
-	port := 6052
+	port := 6053
 
 	// init databse connection
 	database.Init()

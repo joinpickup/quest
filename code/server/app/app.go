@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/go-chi/chi/v5"
 	chi_m "github.com/go-chi/chi/v5/middleware"
-	"github.com/joinpickup/keeper/controller"
+	"github.com/joinpickup/quest-server/controller"
 )
 
 func NewRouter() chi.Router {
