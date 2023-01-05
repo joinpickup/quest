@@ -37,6 +37,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            ACCESS_TOKEN_USR=${{ secrets.ACCESS_TOKEN_USR }}
+            ACCESS_TOKEN_PWD=${{ secrets.ACCESS_TOKEN_PWD }}
   deploy:
     needs: push_to_registry
     runs-on: ubuntu-latest
