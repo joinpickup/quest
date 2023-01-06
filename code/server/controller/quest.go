@@ -14,7 +14,10 @@ import (
 func GetStatus() *models.QuestStatus {
 	var status models.QuestStatus
 	remaining, err := dal.GetQuestPool()
-
+	if err != nil {
+		status.Message = "Uknown error. Blame Andrew."
+		logging.ErrorLogger.Println(err.Error())
+	}
 	status.CanMessage = true
 	status.Message = ""
 
