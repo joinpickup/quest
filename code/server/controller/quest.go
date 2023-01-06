@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/dongri/phonenumber"
@@ -13,6 +14,8 @@ import (
 func GetStatus() *models.QuestStatus {
 	var status models.QuestStatus
 	remaining, err := dal.GetQuestPool()
+	fmt.Println(remaining)
+	fmt.Println(err)
 	status.CanMessage = true
 	status.Message = ""
 
