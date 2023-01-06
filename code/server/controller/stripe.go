@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/joinpickup/middleware-go/logging"
+	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/dal"
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/webhook"
@@ -26,9 +27,7 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 
 	// Pass the request body and Stripe-Signature header to ConstructEvent, along with the webhook signing key
 	// You can find your endpoint's secret in your webhook settings
-	webhookKey := os.Getenv("STRIPE_WEBHOOK_KEY")
-	fmt.Println(webhookKey)
-	fmt.Println(r.Header.Get("Stripe-Signature"))
+	webhookKey := support.TrimQuotes(os.Getenv("STRIPE_WEBHOOK_KEY"))
 	event, err := webhook.ConstructEvent(body, r.Header.Get("Stripe-Signature"), webhookKey)
 
 	if err != nil {
