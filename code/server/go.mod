@@ -3,14 +3,15 @@ module github.com/joinpickup/quest-server
 go 1.19
 
 require (
+	github.com/dongri/phonenumber v0.0.0-20221207225246-5dee3e825c67
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-co-op/gocron v1.18.0
 	github.com/joinpickup/middleware-go v0.4.5
+	github.com/stripe/stripe-go v70.15.0+incompatible
 	github.com/twilio/twilio-go v1.3.0
 )
 
 require (
-	github.com/dongri/phonenumber v0.0.0-20221207225246-5dee3e825c67 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
