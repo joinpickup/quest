@@ -12,6 +12,7 @@
     "ssl-proxy": "local-ssl-proxy --source 443 --target 3000 --key ./ssl/joinpickup.dev-key.pem --cert ./ssl/joinpickup.dev.pem"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^3.3.6",
     "@next/font": "13.1.1",
     "@notionhq/client": "^2.2.3",
     "@types/node": "18.11.18",

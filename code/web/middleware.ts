@@ -7,13 +7,18 @@ export async function middleware(request: NextRequest, res: NextApiResponse) {
   const token = request.cookies.get("token")
   const client = new Middleware(token?.value as string)
 
+
   if (request.nextUrl.pathname.startsWith('/api/kapi')) {
     const keeper = await client.newInstance("KeeperAPI")
-    request.headers.append("authorization", `bearer ${token?.value}`)
+    request.headers.append("Authorization", `bearer ${token?.value}`)
     const endpoint = request.nextUrl.pathname.replace("/api/kapi","/v1") + "?" + request.nextUrl.searchParams
     const url = new URL(endpoint, keeper.base)
     return NextResponse.rewrite(url, {request})
-  } else {
-    return NextResponse.next()
-  }
+  } else if (request.nextUrl.pathname.startsWith('/api/proxy/quest')) {
+    const quest = await client.newInstance("QuestServer")
+    request.headers.append("Authorization", `bearer ${token?.value}`)
+    const endpoint = request.nextUrl.pathname.replace("/api/proxy/quest","/v1") + "?" + request.nextUrl.searchParams
+    const url = new URL(endpoint, quest.base)
+    return NextResponse.rewrite(url, {request})
+  } 
 }

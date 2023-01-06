@@ -9,11 +9,16 @@ import (
 	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/app"
+	"github.com/joinpickup/quest-server/batch"
 )
 
 func main() {
 	// setup env
-	support.SetupEnv(false, nil)
+	// support.SetupEnv(false, nil)
+	env := ".env"
+	support.SetupEnv(true, &env)
+
+	// setup notion
 	logging.SetupLogging()
 
 	// setup variables
@@ -24,7 +29,9 @@ func main() {
 
 	r := app.NewRouter()
 
-	support.RandomUniqueName()
+	// run cron jobs
+	s := batch.BuildScheduler()
+	s.StartAsync()
 
 	// listen on port
 	fmt.Printf("Server running on port: %d\n", port)

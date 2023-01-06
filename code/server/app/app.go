@@ -19,12 +19,8 @@ func NewRouter() chi.Router {
 		// health routes
 		r.Get("/healthping", controller.GetPing)
 		r.Get("/health", controller.GetHealth)
-
-		r.Route("/hermes", func(r chi.Router) {
-			r.Route("/phone", func(r chi.Router) {
-				r.Put("/send", controller.SendPhone)
-			})
-		})
+		r.Get("/status", controller.QuestStatus)
+		r.Post("/message", controller.AddMessage)
 	})
 
 	return r
