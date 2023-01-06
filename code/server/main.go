@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/joinpickup/middleware-go/database"
-	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/app"
 	"github.com/joinpickup/quest-server/batch"
@@ -14,10 +13,10 @@ import (
 
 func main() {
 	// setup env
-	// support.SetupEnv(false, nil)
-	env := ".env"
-	support.SetupEnv(true, &env)
-	logging.SetupLogging()
+	support.SetupEnv(false, nil)
+	// env := ".env"
+	// support.SetupEnv(true, &env)
+	// logging.SetupLogging()
 
 	// setup variables
 	port := 6053
