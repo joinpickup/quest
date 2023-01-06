@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/dongri/phonenumber"
@@ -14,8 +13,6 @@ import (
 func GetStatus() *models.QuestStatus {
 	var status models.QuestStatus
 	remaining, err := dal.GetQuestPool()
-	fmt.Println(remaining)
-	fmt.Println(err)
 	status.CanMessage = true
 	status.Message = ""
 
@@ -23,9 +20,7 @@ func GetStatus() *models.QuestStatus {
 		status.CanMessage = false
 		status.Message = "Error connecting to the database. Blame Andrew."
 		logging.ErrorLogger.Println(err.Error())
-	}
-
-	if remaining.Remaining == 0 {
+	} else if remaining.Remaining == 0 {
 		status.CanMessage = false
 		status.Message = "No more community messages."
 		logging.ErrorLogger.Println("No more community messages.")
