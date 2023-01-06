@@ -28,6 +28,7 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 	// You can find your endpoint's secret in your webhook settings
 	webhookKey := os.Getenv("STRIPE_WEBHOOK_KEY")
 	fmt.Println(webhookKey)
+	fmt.Println(r.Header.Get("Stripe-Signature"))
 	event, err := webhook.ConstructEvent(body, r.Header.Get("Stripe-Signature"), webhookKey)
 
 	if err != nil {
