@@ -33,5 +33,16 @@ func BuildScheduler() *gocron.Scheduler {
 		Working = false
 	})
 
+	// reset pool
+	s.Every(1).Day().At("00:00").Do(func() {
+		Working = true
+		err := dal.ResetPool()
+		if err != nil {
+			logging.ErrorLogger.Println(err)
+		}
+		logging.InfoLogger.Println("Reset message pool.")
+		Working = false
+	})
+
 	return s
 }

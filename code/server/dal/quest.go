@@ -64,6 +64,16 @@ func AddMessage(message models.QuestMessage) error {
 	return err
 }
 
+func ResetPool() error {
+	// reduce
+	updateSQL := `
+		update "quest_pool"
+		set remaining = 50
+	`
+	_, err := database.DB.Exec(updateSQL)
+	return err
+}
+
 func GetMessages() ([]models.QuestMessage, error) {
 	var messages []models.QuestMessage
 	selectSQL := `
