@@ -14,9 +14,9 @@ import (
 
 func main() {
 	// setup env
-	// support.SetupEnv(false, nil)
-	env := ".env"
-	support.SetupEnv(true, &env)
+	support.SetupEnv(false, nil)
+	// env := ".env"
+	// support.SetupEnv(true, &env)
 
 	// setup notion
 	logging.SetupLogging()
