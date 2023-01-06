@@ -6,7 +6,6 @@ import (
 
 	"github.com/dongri/phonenumber"
 	"github.com/joinpickup/middleware-go/logging"
-	"github.com/joinpickup/quest-server/batch"
 	"github.com/joinpickup/quest-server/dal"
 	"github.com/joinpickup/quest-server/models"
 )
@@ -14,10 +13,6 @@ import (
 func GetStatus() *models.QuestStatus {
 	var status models.QuestStatus
 	remaining, err := dal.GetQuestPool()
-	if err != nil {
-		status.Message = "Uknown error. Blame Andrew."
-		logging.ErrorLogger.Println(err.Error())
-	}
 	status.CanMessage = true
 	status.Message = ""
 
@@ -31,12 +26,6 @@ func GetStatus() *models.QuestStatus {
 		status.CanMessage = false
 		status.Message = "No more community messages."
 		logging.ErrorLogger.Println("No more community messages.")
-	}
-
-	if batch.Working {
-		status.CanMessage = false
-		status.Message = "Currently sending out the messages for today. Come back for tomorrow's Quest :)"
-		logging.ErrorLogger.Println("Currently sending out the messages for today. Come back for tomorrow's Quest :)")
 	}
 
 	// TODO: finish and remove
