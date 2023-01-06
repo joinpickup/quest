@@ -142,8 +142,8 @@ export default function Home() {
                 </Button>
               </div>
               <div className="flex-1">
-                <a target="_blank" rel="noopener noreferrer" href="https://buy.stripe.com/bIYaIB2S2bZ35bidQR" onClick={() => {
-                  alert("STILL IN DEVELOPMENT: SPENDING MONEY WILL NOT GET YOU ANYTHING")
+                <a target="_blank" rel="noopener noreferrer" href="https://buy.stripe.com/test_4gw3dv1npeFA6Yg7ss" onClick={() => {
+                  alert("This is a test link and will not accept money. -Andrew")
                   plausible("send-message")
                 }}>
                   <Button click={() => {
