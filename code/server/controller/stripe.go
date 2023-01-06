@@ -1,14 +1,15 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/quest-server/dal"
+	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/webhook"
 )
 
@@ -26,6 +27,7 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 	// Pass the request body and Stripe-Signature header to ConstructEvent, along with the webhook signing key
 	// You can find your endpoint's secret in your webhook settings
 	webhookKey := os.Getenv("STRIPE_WEBHOOK_KEY")
+	fmt.Println(webhookKey)
 	event, err := webhook.ConstructEvent(body, r.Header.Get("Stripe-Signature"), webhookKey)
 
 	if err != nil {
@@ -35,16 +37,14 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if event.Type == "charge.succeeded" {
-		fmt.Println(event.Data.Object)
-		amountCaptured := event.Data.Object["amount_captured"]
-		amountCapturedStr := fmt.Sprintf("%v", amountCaptured)
-		amount, err := strconv.ParseInt(amountCapturedStr, 10, 32)
+		var charge stripe.Charge
+		err := json.Unmarshal(event.Data.Raw, &charge)
 		if err != nil {
-			logging.ErrorLogger.Println("Could not parse amount.")
-			http.Error(w, "Could not parse amount.", http.StatusBadRequest)
+			logging.ErrorLogger.Println("Could no parse webhook " + err.Error())
+			http.Error(w, "Could not parse webhook + "+err.Error(), http.StatusBadRequest)
 			return
 		}
-		amount = amount / 10
+		amount := charge.Amount / 10
 		err = dal.AddMessagesToPool(int32(amount))
 		if err != nil {
 			logging.ErrorLogger.Println(err.Error())
