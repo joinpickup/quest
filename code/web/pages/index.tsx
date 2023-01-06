@@ -64,7 +64,7 @@ export default function Home() {
                 <div>
                   The Daily Quest
                 </div>
-                <Badge text='Beta'></Badge>
+                <Badge text='Alpha'></Badge>
               </div>
             </Button>
             <Button 
