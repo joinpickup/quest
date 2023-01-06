@@ -107,3 +107,6 @@ code/server/ssl/*
 
 # Log files
 log.txt
+
+# Go files
+code/server/bin
