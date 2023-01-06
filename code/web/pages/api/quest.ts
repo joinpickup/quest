@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getTodayQuestion } from '../../lib/notion';
+import { getTodayQuest } from '../../lib/notion';
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
   if (request.method === 'GET') {
-    const question = await getTodayQuestion()
-    response.send(question)
+    const quest = await getTodayQuest()
+    response.send(quest)
     return
   } else {
     response.setHeader('Allow', 'GET');

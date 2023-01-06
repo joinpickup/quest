@@ -1,5 +1,6 @@
 import { Client } from "@notionhq/client"
 import { isThisWeek, isToday } from "date-fns";
+import { QuestQuestion } from "../model/quest";
 
 
 const notion = new Client({
@@ -14,15 +15,17 @@ export const getDatabase = async (databaseId: string) => {
   return response.results;
 };
 
-export async function getTodayQuestion(): Promise<string> {
+export async function getTodayQuest(): Promise<QuestQuestion> {
   const database = await getDatabase(process.env.NOTION_PAGE_ID as string)
   for (const page of database) {
+    const id = (page as any)?.properties?.ID?.number
     const status = (page as any)?.properties?.Status?.status?.name
-    const today = isThisWeek(new Date((page as any)?.properties?.Date?.date?.start as string ?? "1900"))
+    const today = isToday(new Date((page as any)?.properties["Quest Day"]?.date?.start as string ?? "1900"))
     const question = (page as any)?.properties?.Name?.title[0].plain_text
-    if (today && status == "Today" && question) {
-      return question
+
+    if (today && status == "Approved" && id && question) {
+      return {id, quest: question}
     }
   }
-  return "No question today :( blame Andrew"
+  return {id: 0, quest: "No Quest today :( blame Andrew"}
 }

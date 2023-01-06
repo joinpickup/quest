@@ -36,7 +36,7 @@ export default function InfoDialog({close}: InfoDialogProps) {
                             How it works
                             </div>
                             <ul className="flex flex-col space-y-2">
-                                <li className="rounded-lg p-2 bg-gray-600">There is one hand picked question a day.</li>
+                                <li className="rounded-lg p-2 bg-gray-600">There is one hand picked prompt a day.</li>
                                 <li className="rounded-lg p-2 bg-gray-600">Enter the person in your life who best matches the question.</li>
                                 <li className="rounded-lg p-2 bg-gray-600">The day starts with <span className="text-orange-500 italic">1000</span> free messages for the entire community.</li>
                                 <li className="rounded-lg p-2 bg-gray-600">After that anyone can buy messages for the community at <span className="text-orange-500 italic">10 cents</span> a message.</li>

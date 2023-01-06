@@ -10,3 +10,8 @@ export interface QuestStatus {
     remaining: number
     message: string
 }
+
+export interface QuestQuestion {
+    quest: string
+    id: number
+}
