@@ -158,7 +158,7 @@ export default function Join() {
         <option value="12">(UTC+12:00) Fiji</option>
         <option value="12">(UTC+12:00) Magadan</option>
         <option value="13">(UTC+12:00) Petropavlovsk-Kamchatsky - Old</option>
-        <option value="13">(UTC+13:00) Nuku'alofa</option>
+        <option value="13">(UTC+13:00) Nuku{"'"}alofa</option>
         <option value="13">(UTC+13:00) Samoa</option>
     </select>
 
