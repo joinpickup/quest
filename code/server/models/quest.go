@@ -16,7 +16,8 @@ type QuestPool struct {
 }
 
 type QuestStatus struct {
-	CanMessage bool   `json:"can_message"`
-	Remaining  int32  `json:"remaining"`
-	Message    string `json:"message"`
+	CanMessage  bool   `json:"can_message"`
+	Remaining   int32  `json:"remaining"`
+	Message     string `json:"message"`
+	PaymentLink string `json:"payment_link"`
 }

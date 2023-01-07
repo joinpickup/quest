@@ -3,9 +3,11 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"github.com/dongri/phonenumber"
 	"github.com/joinpickup/middleware-go/logging"
+	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/dal"
 	"github.com/joinpickup/quest-server/models"
 )
@@ -13,6 +15,7 @@ import (
 func GetStatus() *models.QuestStatus {
 	var status models.QuestStatus
 	remaining, err := dal.GetQuestPool()
+	status.PaymentLink = support.TrimQuotes(os.Getenv("STRIPE_PAYMENT_LINK"))
 	status.CanMessage = true
 	status.Message = ""
 
@@ -26,9 +29,6 @@ func GetStatus() *models.QuestStatus {
 		logging.ErrorLogger.Println("No more community messages.")
 	}
 
-	// TODO: finish and remove
-	// status.CanMessage = false
-	// status.Message = "Implementation not finished yet. Sorry :( - Andrew"
 	status.Remaining = remaining.Remaining
 	return &status
 }
