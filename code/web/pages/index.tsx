@@ -57,7 +57,7 @@ export default function Home() {
       <main className="flex flex-col h-screen w-screen text-md justify-center items-center">
         <div className="p-4 flex flex-col justify-between h-4/5 w-96 space-y-2 ">
           <div className="flex flex-col space-y-2 ">
-            <div className="text-4xl">
+            <div className="text-4xl flex">
               {quest?.quest} <span className="text-lg text-green-500">#{quest?.id}</span>
             </div>
             {/* <Button click={() => {
