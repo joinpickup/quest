@@ -139,7 +139,7 @@ export default function Home() {
                 </Button>
               </div>
               <div className="flex-1">
-                <a className="plausible-event-name=other-apps" target="_blank" rel="noopener noreferrer" href={status?.payment_link} onClick={() => {
+                <a className="plausible-event-name=buy-message" target="_blank" rel="noopener noreferrer" href={status?.payment_link} onClick={() => {
                 }}>
                   <Button click={() => {
                   }}>
