@@ -50,10 +50,10 @@ export default function InfoDialog({close}: InfoDialogProps) {
                                 Someone chose you for the Daily Quest.
                                 <br />
                                 <br />
-                                Who do you feel the most comfortable around?
+                                Someone who you feel the most comfortable around.
                                 <br />
                                 <br />
-                                Go to quest.joinpickup.com for info on how to play.
+                                Go to quest.joinpickup.com for information on how to participate tomorrow.
                             </li>
                             </ul>
                         </div>

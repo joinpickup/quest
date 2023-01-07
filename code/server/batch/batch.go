@@ -42,7 +42,7 @@ func SendMessage(message models.QuestMessage) error {
 	params := &twilioApi.CreateMessageParams{}
 	params.SetTo(to)
 	params.SetFrom(os.Getenv("TWILIO_PHONE"))
-	params.SetBody(fmt.Sprintln("Someone chose you for The Daily Quest today. \n\nGo to https://quest.joinpickup.com for information on how to participate."))
+	params.SetBody(fmt.Sprintf("Someone chose you for The Daily Quest today. \n\n%s\n\nGo to https://quest.joinpickup.com for information on how to participate tomorrow.", message.Quest))
 
 	// before sending the message, do one more check to make sure that the message hasn't been completed by another process
 	found, err := dal.GetMessage(message.Phone)
