@@ -5,16 +5,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 
 	"github.com/joinpickup/middleware-go/logging"
-	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/dal"
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/webhook"
 )
 
 func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
+	stripe.Key = "sk_test_51LPYGOGDijSq41Jny8GDiygZ9jquKTe48MNsfE650x4k7nc2EtF2OdC7mdPCsqR7HMInotXDKwO55sIT5rX3KO3f00t9tYcFqg"
 	const MaxBodyBytes = int64(65536)
 	r.Body = http.MaxBytesReader(w, r.Body, MaxBodyBytes)
 
@@ -27,7 +26,7 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 
 	// Pass the request body and Stripe-Signature header to ConstructEvent, along with the webhook signing key
 	// You can find your endpoint's secret in your webhook settings
-	webhookKey := support.TrimQuotes(os.Getenv("STRIPE_WEBHOOK_KEY"))
+	webhookKey := "we_1MNOuEGDijSq41Jn1UwvRWFt"
 	event, err := webhook.ConstructEvent(body, r.Header.Get("Stripe-Signature"), webhookKey)
 
 	if err != nil {
