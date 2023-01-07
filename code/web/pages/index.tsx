@@ -67,59 +67,63 @@ export default function Home() {
                   Old Quests
                 </div>
               </div>
-            </Button> */}
-            {
-              status?.can_message ? <>
-                <Input 
-                  error={inputError}
-                  setError={setInputError}
-                  type='tel'
-                  value={phone}
-                  change={setPhone}
-                  placeholder="Enter their phone number"
-                /> 
-                  <Button 
-                  type={ButtonType.CONTAINED} 
-                  className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${loadingAdd ? "bg-gray-500 hover:bg-gray-600" : "bg-green-500 hover:bg-green-600 cursor-pointer"}`}
-                  click={() => {
-                    if (!phone) {
+          </Button> */}
+              <Input 
+                error={inputError}
+                setError={setInputError}
+                type='tel'
+                value={phone}
+                change={setPhone}
+                placeholder="Enter their phone number"
+              /> 
+                <Button 
+                type={ButtonType.CONTAINED} 
+                className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${loadingAdd ? "bg-gray-500 hover:bg-gray-600" : "bg-green-500 hover:bg-green-600 cursor-pointer"}`}
+                click={() => {
+                  if (!phone) {
+                    setInputError(true)
+                    setError({active: true, message: "Please enter a valid phone number."})
+                    return
+                  }
+
+                  let message = {
+                    fingerprint,
+                    quest: quest?.quest as string,
+                    status: "queued",
+                    phone
+                  }
+
+                  setLoadingAdd(true)
+                  addMessage(message)
+                    .then(() => {
+                      setPhone("")
+                      refreshStatus()
+                      setSuccess({active: true, message: "Message submitted."})
+                      setLoadingAdd(false)
+                      setInputError(false)
+                    })
+                    .catch(err => {
                       setInputError(true)
-                      setError({active: true, message: "Please enter a valid phone number."})
-                      return
-                    }
-
-                    let message = {
-                      fingerprint,
-                      quest: quest?.quest as string,
-                      status: "queued",
-                      phone
-                    }
-
-                    setLoadingAdd(true)
-                    addMessage(message)
-                      .then(() => {
-                        setPhone("")
-                        refreshStatus()
-                        setSuccess({active: true, message: "Message submitted."})
-                        setLoadingAdd(false)
-                        setInputError(false)
-                      })
-                      .catch(err => {
-                        setInputError(true)
-                        setError({active: true, message: err.toString()})
-                        setLoadingAdd(false)
-                      })
+                      setError({active: true, message: err.toString()})
+                      setLoadingAdd(false)
+                    })
+                }}>
+                  <div>
+                    Enter
+                  </div>
+                </Button>
+              <div>
+                  <Button click={() => {
+                    router.push("/join")
                   }}>
-                    <div>
-                      Enter
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" /></svg>
+                      <div>
+                        Join
+                      </div>
                     </div>
                   </Button>
-              </> : <>
-                <div className="text-xl">
-                  {status?.message}
                 </div>
-              </>
-            }
             <div className="text-lg flex justify-between">
               <div>
                 Community messages remianing
@@ -210,7 +214,7 @@ export default function Home() {
                 </div>
               </Button>
             </div>
-          </div>
+        </div>
       </main>
     </>
   )

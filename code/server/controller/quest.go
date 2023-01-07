@@ -29,6 +29,8 @@ func GetStatus() *models.QuestStatus {
 		logging.ErrorLogger.Println("No more community messages.")
 	}
 
+	status.CanMessage = false
+	status.Message = "Not done yet. Sorry :( - Andrew"
 	status.Remaining = remaining.Remaining
 	return &status
 }
