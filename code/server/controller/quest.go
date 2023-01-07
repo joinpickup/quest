@@ -53,19 +53,19 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&message)
 	if err != nil {
 		logging.ErrorLogger.Println("Invalid body.")
-		http.Error(w, "Invalid body.", http.StatusInternalServerError)
+		http.Error(w, "Invalid body.", http.StatusBadRequest)
 		return
 	}
 
 	if phonenumber.Parse(message.Phone, "US") == "" {
 		logging.ErrorLogger.Println("Please enter a valid phone number.")
-		http.Error(w, "Please enter a valid phone number.", http.StatusInternalServerError)
+		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
 		return
 	}
 
 	if !models.IsMessageStatus(message.Status) {
 		logging.ErrorLogger.Println("Invalid status.")
-		http.Error(w, "Invalid status.", http.StatusInternalServerError)
+		http.Error(w, "Invalid status.", http.StatusBadRequest)
 		return
 	}
 

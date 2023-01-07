@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Badge from '../ACE/Badge/Badge'
 import Button, { ButtonType } from '../ACE/Button/Button'
 import Input from '../ACE/Input/Input'
@@ -18,6 +18,7 @@ export default function Home() {
   const [loadingAdd, setLoadingAdd] = useState(false)
   const [success, setSuccess] = useState({active: false, message: ""})
   const [error, setError] = useState({active: false, message: ""})
+  const [inputError, setInputError] = useState(false)
   const {fingerprint, loading: loadingFingerprint} = useFingerprint()
 
   // data
@@ -70,6 +71,8 @@ export default function Home() {
             {
               status?.can_message ? <>
                 <Input 
+                  error={inputError}
+                  setError={setInputError}
                   type='tel'
                   value={phone}
                   change={setPhone}
@@ -80,6 +83,7 @@ export default function Home() {
                   className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${loadingAdd ? "bg-gray-500 hover:bg-gray-600" : "bg-green-500 hover:bg-green-600 cursor-pointer"}`}
                   click={() => {
                     if (!phone) {
+                      setInputError(true)
                       setError({active: true, message: "Please enter a valid phone number."})
                       return
                     }
@@ -92,15 +96,19 @@ export default function Home() {
                     }
 
                     setLoadingAdd(true)
-                    addMessage(message).catch(err => {
-                      setError({active: true, message: err.toString()})
-                      setLoadingAdd(false)
-                    }).then(() => {
-                      setPhone("")
-                      refreshStatus()
-                      setSuccess({active: true, message: "Message submitted."})
-                      setLoadingAdd(false)
-                    })
+                    addMessage(message)
+                      .then(() => {
+                        setPhone("")
+                        refreshStatus()
+                        setSuccess({active: true, message: "Message submitted."})
+                        setLoadingAdd(false)
+                        setInputError(false)
+                      })
+                      .catch(err => {
+                        setInputError(true)
+                        setError({active: true, message: err.toString()})
+                        setLoadingAdd(false)
+                      })
                   }}>
                     <div>
                       Enter
