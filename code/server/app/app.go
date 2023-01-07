@@ -21,7 +21,7 @@ func NewRouter() chi.Router {
 		r.Get("/health", controller.GetHealth)
 		r.Get("/status", controller.QuestStatus)
 		r.Post("/message", controller.AddMessage)
-		r.Post("/checkout-callback", controller.CheckoutCallback)
+		r.Post("/payment-callback", controller.CheckoutCallback)
 	})
 
 	return r
