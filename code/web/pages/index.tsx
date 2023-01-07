@@ -21,7 +21,6 @@ export default function Home() {
   const [success, setSuccess] = useState({active: false, message: ""})
   const [error, setError] = useState({active: false, message: ""})
   const {fingerprint, loading: loadingFingerprint} = useFingerprint()
-  const plausible = usePlausible()
 
   // data
   const {data: quest, error: questionErr, refetch: refetchQuery} = useQuery<QuestQuestion>("/api/quest")
@@ -36,8 +35,9 @@ export default function Home() {
         <title>The Daily Quest</title>
         <meta name="description" content="A daily challenge to make the lives of the people around you better." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script defer data-domain="quest.joinpickup.com" src="https://analytics.joinpickup.com/js/script.js"></script>
+        <script defer data-domain="quest.joinpickup.com" src="https://analytics.joinpickup.com/js/script.tagged-events.js"></script>
         <link rel="icon" href="/favicon.ico" />
+        
       </Head>
       {
         info ? <InfoDialog close={() => setInfo(false)}/> : <></>
@@ -79,14 +79,13 @@ export default function Home() {
                 /> 
                   <Button 
                   type={ButtonType.CONTAINED} 
-                  className={`flex p-2 rounded-lg items-center justify-center ${loadingAdd ? "bg-gray-500 hover:bg-gray-600" : "bg-green-500 hover:bg-green-600 cursor-pointer"}`}
+                  className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${loadingAdd ? "bg-gray-500 hover:bg-gray-600" : "bg-green-500 hover:bg-green-600 cursor-pointer"}`}
                   click={() => {
                     if (!phone) {
                       setError({active: true, message: "Please enter a valid phone number."})
                       return
                     }
 
-                    plausible("send-message")
                     let message = {
                       fingerprint,
                       quest: quest?.quest as string,
@@ -142,9 +141,7 @@ export default function Home() {
                 </Button>
               </div>
               <div className="flex-1">
-                <a target="_blank" rel="noopener noreferrer" href={status?.payment_link} onClick={() => {
-                  alert("This is a test link and will not accept money. -Andrew")
-                  plausible("buy-message")
+                <a className="plausible-event-name=other-apps" target="_blank" rel="noopener noreferrer" href={status?.payment_link} onClick={() => {
                 }}>
                   <Button click={() => {
                   }}>
@@ -194,8 +191,8 @@ export default function Home() {
                 </div> */}
               </div>
               <Button 
+                className={"plausible-event-name=other-apps flex p-2 rounded-lg cursor-pointer justify-center items-center border-2 border-gray-600 hover:bg-gray-600 w-full"}
                 click={() => {
-                  plausible("other-apps")
                   router.push("https://joinpickup.com?utm_source=daily_quest&utm_medium=link&utm_campaign=daily_quest")
                 }}
               >
