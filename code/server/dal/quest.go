@@ -32,7 +32,7 @@ func GetMessage(phone string) (*models.QuestMessage, error) {
 		where phone = $1
 	`
 	err := database.DB.QueryRow(selectSQL, phone).Scan(
-		&message.Phone,
+		&message.PhoneHash,
 		&message.Quest,
 		&message.Status,
 	)
@@ -50,7 +50,7 @@ func AddMessage(message models.QuestMessage) error {
 		insert into "quest_message" ("fingerprint", "phone", "quest", "status")
 		values ($1, $2, $3, $4)
 	`
-	_, err := database.DB.Exec(insertSQL, message.Fingerprint, message.Phone, message.Quest, message.Status)
+	_, err := database.DB.Exec(insertSQL, message.Fingerprint, message.PhoneHash, message.Quest, message.Status)
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func GetMessages() ([]models.QuestMessage, error) {
 		// get row
 		err := rows.Scan(
 			&message.Fingerprint,
-			&message.Phone,
+			&message.PhoneHash,
 			&message.Quest,
 			&message.Status,
 		)
@@ -129,6 +129,16 @@ func MarkMessageStatus(status string, message models.QuestMessage) error {
 		set status = $1
 		where phone = $2
 	`
-	_, err := database.DB.Exec(insertSQL, status, message.Phone)
+	_, err := database.DB.Exec(insertSQL, status, message.PhoneHash)
+	return err
+}
+
+func WhiteListPhone(phone_hash string) error {
+	// insert message
+	insertSQL := `
+		insert into "quest_whitelist" ("phone_hash")
+		values ($1)
+	`
+	_, err := database.DB.Exec(insertSQL, phone_hash)
 	return err
 }

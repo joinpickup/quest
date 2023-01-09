@@ -16,3 +16,7 @@ export interface QuestQuestion {
   quest: string;
   id: number;
 }
+
+export interface VerifyBody {
+  valid: boolean;
+}

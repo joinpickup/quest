@@ -6,7 +6,7 @@ import Button, { ButtonType } from "../ACE/Button/Button";
 import Input from "../ACE/Input/Input";
 import Toast, { ToastType } from "../ACE/Toast/Toast";
 import InfoDialog from "../components/infoDialog/InfoDialog";
-import { addMessage } from "../helper/message";
+import { addMessage } from "../helper/quest";
 import useFingerprint from "../lib/useFingerprint";
 import useQuery from "../lib/useQuery";
 import { QuestQuestion, QuestStatus } from "../model/quest";

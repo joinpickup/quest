@@ -30,8 +30,14 @@ export default function TermsDialog({ close }: InfoDialogProps) {
             </div>
             <ul className="flex flex-col space-y-2">
               <li className="rounded-lg p-2 bg-gray-600">
-                Send you a message with the phone number: +1 (757) 835-3913 at
-                10pm in the time zone you specify.
+                Send you a message with the phone number: +1 (757) 835-3913
+                whenever someone chooses you for the prompt.
+              </li>
+              <li className="rounded-lg p-2 bg-gray-600">
+                Opt out{" "}
+                <a href="/leave" className="hover:underline text-orange-400">
+                  here.
+                </a>
               </li>
               <li className="rounded-lg p-2 bg-gray-600">
                 That{"'"}s it, it{"'"}s pretty simple.

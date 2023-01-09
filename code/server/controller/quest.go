@@ -8,6 +8,7 @@ import (
 	"github.com/dongri/phonenumber"
 	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/middleware-go/support"
+	"github.com/joinpickup/quest-server/compute"
 	"github.com/joinpickup/quest-server/dal"
 	"github.com/joinpickup/quest-server/models"
 )
@@ -42,7 +43,8 @@ func QuestStatus(w http.ResponseWriter, r *http.Request) {
 	w.Write(statusStr)
 }
 
-func AddMessage(w http.ResponseWriter, r *http.Request) {
+func SendMessage(w http.ResponseWriter, r *http.Request) {
+	// check app status
 	status := GetStatus()
 	if !status.CanMessage {
 		logging.ErrorLogger.Println(status.Message)
@@ -50,29 +52,27 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get messeage
-	var message models.QuestMessage
-	err := json.NewDecoder(r.Body).Decode(&message)
-	if err != nil {
-		logging.ErrorLogger.Println("Invalid body.")
-		http.Error(w, "Invalid body.", http.StatusBadRequest)
-		return
-	}
-
-	if phonenumber.Parse(message.Phone, "US") == "" {
+	to := r.URL.Query().Get("phone")
+	if phonenumber.Parse(to, "US") == "" {
 		logging.ErrorLogger.Println("Please enter a valid phone number.")
 		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
 		return
 	}
 
-	if !models.IsMessageStatus(message.Status) {
-		logging.ErrorLogger.Println("Invalid status.")
-		http.Error(w, "Invalid status.", http.StatusBadRequest)
+	// hash phone
+	// check whitelist
+	canSend := false
+	if !canSend {
+		logging.ErrorLogger.Println("That number has not joined the Daily Quest.")
+		http.Error(w, "That number has not joined the Daily Quest.", http.StatusBadRequest)
 		return
 	}
 
+	// craft message
+	var message models.QuestMessage
+
 	// add message to db
-	err = dal.AddMessage(message)
+	err := compute.SendMessage(message)
 	if err != nil {
 		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -80,6 +80,28 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// subtract from remaining
+	w.Header().Add("Content-Type", "application/json")
+	w.Write([]byte{})
+}
+
+func WhiteList(w http.ResponseWriter, r *http.Request) {
+	to := r.URL.Query().Get("phone")
+	if phonenumber.Parse(to, "US") == "" {
+		logging.ErrorLogger.Println("Please enter a valid phone number.")
+		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
+		return
+	}
+	// hash phone hash
+	to_hash := to
+
+	// code
+	err := dal.WhiteListPhone(to_hash)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.Write([]byte{})
 }
