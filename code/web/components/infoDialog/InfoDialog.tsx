@@ -13,7 +13,7 @@ export default function InfoDialog({ close }: InfoDialogProps) {
           <div className="flex items-center space-x-2">
             <div className="flex-1 w-full flex flex-col text-xl">
               <div>What is the Daily Quest</div>
-              <Badge text="Alpha" />
+              <Badge text="Beta" />
             </div>
             <Button
               className="flex p-2 rounded-lg cursor-pointer justify-center items-center border-2 border-gray-600 hover:bg-gray-600"

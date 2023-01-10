@@ -7,18 +7,20 @@ import Toast, { ToastType } from "../ACE/Toast/Toast";
 import InfoDialog from "../components/infoDialog/InfoDialog";
 import PrivacyDialog from "../components/privacyDialog/PrivacyDialog";
 import TermsDialog from "../components/termsDialog/TermsDialog";
+import { sendOTP, verifyOTP } from "../helper/quest";
 
-export default function Join() {
+export default function Leave() {
   // state
   const [phone, setPhone] = useState("");
   const [OTP, setOTP] = useState("");
   const [page, setPage] = useState(0);
   const [privacyDialog, setPrivacyDialog] = useState(false);
   const [terms, setTermsDialog] = useState(false);
-  const [inputError, setInputError] = useState(false);
   const [info, setInfo] = useState(false);
+  const [inputError, setInputError] = useState(false);
   const [error, setError] = useState({ active: false, message: "" });
   const [success, setSuccess] = useState({ active: false, message: "" });
+  const [loadingSend, setLoadingSend] = useState(false);
   const [loadingVerify, setLoadingVerify] = useState(false);
 
   // router
@@ -67,11 +69,15 @@ export default function Join() {
               <Button
                 type={ButtonType.CONTAINED}
                 className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${
-                  loadingVerify
-                    ? "bg-gray-500 hover:bg-gray-600"
+                  loadingSend
+                    ? "bg-gray-500 cursor-pointer"
                     : "bg-green-500 hover:bg-green-600 cursor-pointer"
                 }`}
                 click={() => {
+                  if (loadingSend) {
+                    return
+                  }
+
                   if (!phone) {
                     setInputError(true);
                     setError({
@@ -82,7 +88,27 @@ export default function Join() {
                   }
 
                   // send verification code
-                  setPage(page + 1);
+                  setLoadingSend(true);
+                  sendOTP(phone, "leave")
+                    .then((res) => {
+                      // go to next page with terms dialog set and reset state
+                      setOTP("")
+                      setPage(page + 1);
+                      setTermsDialog(true);
+                      setLoadingSend(false);
+                      setLoadingVerify(false);
+                    })
+                    .catch((err) => {
+                      setOTP("")
+                      setPhone("")
+                      setInputError(true);
+                      setError({
+                        active: true,
+                        message: err.toString(),
+                      });
+                      setLoadingSend(false);
+                      return;
+                    });
                 }}
               >
                 <div>Enter</div>
@@ -136,30 +162,31 @@ export default function Join() {
                     </Button>
                   </div>
                 </div>
+
                 <div className="flex-1">
-                    <Button
-                      click={() => {
-                        setInfo(true);
-                      }}
-                    >
-                      <div className="flex space-x-2 items-center">
-                        <svg
-                          className="w-4 h-4"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <div>The Daily Quest</div>
-                        <Badge text="Alpha"></Badge>
-                      </div>
-                    </Button>
-                  </div>
+                  <Button
+                    click={() => {
+                      setInfo(true);
+                    }}
+                  >
+                    <div className="flex space-x-2 items-center">
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <div>The Daily Quest</div>
+                      <Badge text="Alpha"></Badge>
+                    </div>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -178,9 +205,37 @@ export default function Join() {
                 >
                   <div>Cancel</div>
                 </Button>
-                <Button click={() => {}}>
-                  <div>Send Again</div>
-                </Button>
+                {loadingSend || loadingVerify ? (
+                  <></>
+                ) : (
+                  <Button
+                    click={() => {
+                      if (loadingSend || loadingVerify) {
+                        return
+                      }
+
+                      setLoadingSend(true);
+                      setLoadingVerify(true);
+                      sendOTP(phone, "leave")
+                        .then((res) => {
+                          setLoadingSend(false);
+                          setLoadingVerify(false);
+                        })
+                        .catch((err) => {
+                          setInputError(true);
+                          setError({
+                            active: true,
+                            message: err.toString(),
+                          });
+                          setLoadingVerify(false);
+                          setLoadingSend(false);
+                          return;
+                        });
+                    }}
+                  >
+                    <div>Send Again</div>
+                  </Button>
+                )}
                 <Input
                   error={inputError}
                   setError={setInputError}
@@ -190,28 +245,51 @@ export default function Join() {
                 />
                 <Button
                   type={ButtonType.CONTAINED}
-                  className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${
+                  className={`plausible-event-name=leave flex p-2 rounded-lg items-center justify-center ${
                     loadingVerify
-                      ? "bg-gray-500 hover:bg-gray-600"
-                      : "text-gray-600 bg-red-400 hover:bg-red-500 cursor-pointer"
+                      ? "bg-gray-500 cursor-default"
+                      : "bg-red-400 hover:bg-red-500 text-gray-600 tecursor-pointer"
                   }`}
                   click={() => {
-                    if (!phone) {
+                    if (loadingVerify) {
+                      return
+                    }
+                    if (!OTP) {
                       setInputError(true);
                       setError({
                         active: true,
-                        message: "Please enter a valid phone number.",
+                        message: "Please enter a code.",
                       });
                       return;
                     }
 
-                    setError({
-                      active: true,
-                      message: "Not finished yet. Sorry :( -Andrew",
-                    });
+                    setLoadingVerify(true);
+                    verifyOTP(phone, OTP, "leave")
+                      .then(() => {
+                        setSuccess({
+                          active: true,
+                          message: "Succesfully left.",
+                        });
+                        setTimeout(() => {
+                          router.push("/");
+                        }, 500);
+                      })
+                      .catch((err) => {
+                        setPage(0)
+                        setOTP("")
+                        setPhone("")
+                        setLoadingVerify(false);
+                        setLoadingSend(false);
+                        setInputError(true);
+                        setError({
+                          active: true,
+                          message: err.toString(),
+                        });
+                        return;
+                      });
                   }}
                 >
-                  <div>Leave</div>
+                  <div>Leave The Daily Quest</div>
                 </Button>
                 <div className="flex flex-col space-y-2">
                   <div className="flex space-x-2">
@@ -261,30 +339,6 @@ export default function Join() {
                         </div>
                       </Button>
                     </div>
-                  </div>
-                  <div className="flex-1">
-                    <Button
-                      click={() => {
-                        setInfo(true);
-                      }}
-                    >
-                      <div className="flex space-x-2 items-center">
-                        <svg
-                          className="w-4 h-4"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <div>The Daily Quest</div>
-                        <Badge text="Alpha"></Badge>
-                      </div>
-                    </Button>
                   </div>
                 </div>
               </div>

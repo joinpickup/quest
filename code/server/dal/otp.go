@@ -65,7 +65,7 @@ func VerifyPhoneCode(phone string, code string) (bool, error) {
 			CASE WHEN EXISTS 
 			(
 				select phone, code, valid from "phone_verification"
-				where phone = $1 and code = $2 and valid = TRUE
+				where phone = $1 and code = $2 and valid = true
 			)
 			THEN 'TRUE'
 			ELSE 'FALSE'

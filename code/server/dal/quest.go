@@ -59,22 +59,26 @@ func AddMessage(message models.QuestMessage) error {
 		return err
 	}
 
+	return DecrementPool()
+}
+
+func DecrementPool() error {
 	// reduce
 	updateSQL := `
 		update "quest_pool"
 		set remaining = remaining - 1
 	`
-	_, err = database.DB.Exec(updateSQL)
+	_, err := database.DB.Exec(updateSQL)
 	return err
 }
 
-func ResetPool() error {
+func ResetPool(number int32) error {
 	// reduce
 	updateSQL := `
 		update "quest_pool"
-		set remaining = 50
+		set remaining = $1
 	`
-	_, err := database.DB.Exec(updateSQL)
+	_, err := database.DB.Exec(updateSQL, number)
 	return err
 }
 

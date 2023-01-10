@@ -8,19 +8,55 @@ import (
 
 	"github.com/dongri/phonenumber"
 	"github.com/joinpickup/middleware-go/logging"
+	"github.com/joinpickup/quest-server/compute"
 	"github.com/joinpickup/quest-server/dal"
+	"github.com/joinpickup/quest-server/middleware"
 	"github.com/joinpickup/quest-server/models"
 	"github.com/twilio/twilio-go"
 	twilioApi "github.com/twilio/twilio-go/rest/api/v2010"
 )
 
 func SendOTP(w http.ResponseWriter, r *http.Request) {
+	_, err := middleware.ValidateToken(r)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	accountSid := os.Getenv("TWILIO_SID")
 	authToken := os.Getenv("TWILIO_AUTH")
 	to := r.URL.Query().Get("phone")
+	otp_type := r.URL.Query().Get("type")
 	if phonenumber.Parse(to, "US") == "" {
 		logging.ErrorLogger.Println("Please enter a valid phone number.")
 		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
+		return
+	}
+
+	if otp_type != "join" && otp_type != "leave" {
+		logging.ErrorLogger.Println("Please enter a valid OTP type.")
+		http.Error(w, "Please enter a valid OTP type.", http.StatusBadRequest)
+		return
+	}
+
+	// code
+	found, err := compute.CheckIfMember(to)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if found != nil && otp_type == "join" {
+		logging.ErrorLogger.Println("Already a member.")
+		http.Error(w, "Already a member.", http.StatusBadRequest)
+		return
+	}
+
+	if found == nil && otp_type == "leave" {
+		logging.ErrorLogger.Println("Not a member.")
+		http.Error(w, "Not a member.", http.StatusBadRequest)
 		return
 	}
 
@@ -57,6 +93,13 @@ func SendOTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func VerifyOTP(w http.ResponseWriter, r *http.Request) {
+	_, err := middleware.ValidateToken(r)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	to := r.URL.Query().Get("phone")
 	code := r.URL.Query().Get("code")
 	if code == "" {

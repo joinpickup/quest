@@ -1,13 +1,12 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Badge from "../ACE/Badge/Badge";
 import Button, { ButtonType } from "../ACE/Button/Button";
 import Input from "../ACE/Input/Input";
 import Toast, { ToastType } from "../ACE/Toast/Toast";
 import InfoDialog from "../components/infoDialog/InfoDialog";
 import { addMessage } from "../helper/quest";
-import useFingerprint from "../lib/useFingerprint";
 import useQuery from "../lib/useQuery";
 import { QuestQuestion, QuestStatus } from "../model/quest";
 
@@ -19,7 +18,6 @@ export default function Home() {
   const [success, setSuccess] = useState({ active: false, message: "" });
   const [error, setError] = useState({ active: false, message: "" });
   const [inputError, setInputError] = useState(false);
-  const { fingerprint, loading: loadingFingerprint } = useFingerprint();
 
   // data
   const {
@@ -107,16 +105,8 @@ export default function Home() {
                   });
                   return;
                 }
-
-                let message = {
-                  fingerprint,
-                  quest: quest?.quest as string,
-                  status: "queued",
-                  phone,
-                };
-
                 setLoadingAdd(true);
-                addMessage(message)
+                addMessage(phone)
                   .then(() => {
                     setPhone("");
                     refreshStatus();
@@ -125,9 +115,11 @@ export default function Home() {
                     setInputError(false);
                   })
                   .catch((err) => {
+                    let error = err.toString();
                     setInputError(true);
-                    setError({ active: true, message: err.toString() });
+                    setError({ active: true, message: error });
                     setLoadingAdd(false);
+                    return;
                   });
               }}
             >
@@ -237,21 +229,10 @@ export default function Home() {
                       />
                     </svg>
                     <div>The Daily Quest</div>
-                    <Badge text="Alpha"></Badge>
+                    <Badge text="Beta"></Badge>
                   </div>
                 </Button>
               </div>
-              {/* <div>
-                  <Button click={() => {
-                  }}>
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
-                      <div>
-                        Privacy
-                      </div>
-                    </div>
-                  </Button>
-                </div> */}
             </div>
             <Button
               className={

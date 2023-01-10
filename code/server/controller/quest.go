@@ -10,6 +10,7 @@ import (
 	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/compute"
 	"github.com/joinpickup/quest-server/dal"
+	"github.com/joinpickup/quest-server/middleware"
 	"github.com/joinpickup/quest-server/models"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -43,6 +44,13 @@ func QuestStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 func SendMessage(w http.ResponseWriter, r *http.Request) {
+	_, err := middleware.ValidateToken(r)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	// check app status
 	status := GetStatus()
 	if !status.CanMessage {
@@ -94,6 +102,13 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func Join(w http.ResponseWriter, r *http.Request) {
+	_, err := middleware.ValidateToken(r)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	to := r.URL.Query().Get("phone")
 	if phonenumber.Parse(to, "US") == "" {
 		logging.ErrorLogger.Println("Please enter a valid phone number.")
@@ -135,6 +150,13 @@ func Join(w http.ResponseWriter, r *http.Request) {
 }
 
 func Leave(w http.ResponseWriter, r *http.Request) {
+	_, err := middleware.ValidateToken(r)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	to := r.URL.Query().Get("phone")
 	if phonenumber.Parse(to, "US") == "" {
 		logging.ErrorLogger.Println("Please enter a valid phone number.")

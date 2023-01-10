@@ -31,7 +31,7 @@ export default function TermsDialog({ close }: InfoDialogProps) {
             <ul className="flex flex-col space-y-2">
               <li className="rounded-lg p-2 bg-gray-600">
                 Send you a message with the phone number: +1 (757) 835-3913
-                whenever someone chooses you for the prompt.
+                once during the day.
               </li>
               <li className="rounded-lg p-2 bg-gray-600">
                 Opt out{" "}

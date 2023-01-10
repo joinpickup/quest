@@ -1,6 +1,8 @@
 package batch
 
 import (
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-co-op/gocron"
@@ -13,7 +15,14 @@ func BuildScheduler() *gocron.Scheduler {
 
 	// reset pool
 	s.Every(1).Day().At("05:00").Do(func() {
-		err := dal.ResetPool()
+		total := os.Getenv("QUEST_POOL_TOTAL")
+		totalInt, err := strconv.ParseInt(total, 10, 32)
+		if err != nil {
+			totalInt = 1000
+			logging.ErrorLogger.Println(err)
+		}
+
+		err = dal.ResetPool(int32(totalInt))
 		if err != nil {
 			logging.ErrorLogger.Println(err)
 		}

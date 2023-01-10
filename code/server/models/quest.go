@@ -28,5 +28,5 @@ type QuestMember struct {
 }
 
 type VerificationBody struct {
-	Valid bool
+	Valid bool `json:"valid"`
 }

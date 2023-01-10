@@ -7,7 +7,7 @@ import Toast, { ToastType } from "../ACE/Toast/Toast";
 import InfoDialog from "../components/infoDialog/InfoDialog";
 import PrivacyDialog from "../components/privacyDialog/PrivacyDialog";
 import TermsDialog from "../components/termsDialog/TermsDialog";
-import { sendOTP } from "../helper/quest";
+import { sendOTP, verifyOTP } from "../helper/quest";
 
 export default function Join() {
   // state
@@ -20,6 +20,7 @@ export default function Join() {
   const [inputError, setInputError] = useState(false);
   const [error, setError] = useState({ active: false, message: "" });
   const [success, setSuccess] = useState({ active: false, message: "" });
+  const [loadingSend, setLoadingSend] = useState(false);
   const [loadingVerify, setLoadingVerify] = useState(false);
 
   // router
@@ -67,12 +68,16 @@ export default function Join() {
               />
               <Button
                 type={ButtonType.CONTAINED}
-                className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${
-                  loadingVerify
-                    ? "bg-gray-500 hover:bg-gray-600"
+                className={`flex p-2 rounded-lg items-center justify-center ${
+                  loadingSend
+                    ? "bg-gray-500 cursor-pointer"
                     : "bg-green-500 hover:bg-green-600 cursor-pointer"
                 }`}
                 click={() => {
+                  if (loadingSend) {
+                    return
+                  }
+
                   if (!phone) {
                     setInputError(true);
                     setError({
@@ -83,17 +88,27 @@ export default function Join() {
                   }
 
                   // send verification code
-                  sendOTP(phone).then(res => {
-                    setPage(page + 1);
-                    setTermsDialog(true);
-                  }).catch(err => {
-                    setInputError(true);
-                    setError({
-                      active: true,
-                      message: err.toString(),
+                  setLoadingSend(true);
+                  sendOTP(phone, "join")
+                    .then((res) => {
+                      // go to next page with terms dialog set and reset state
+                      setOTP("")
+                      setPage(page + 1);
+                      setTermsDialog(true);
+                      setLoadingSend(false);
+                      setLoadingVerify(false);
+                    })
+                    .catch((err) => {
+                      setOTP("")
+                      setPhone("")
+                      setInputError(true);
+                      setError({
+                        active: true,
+                        message: err.toString(),
+                      });
+                      setLoadingSend(false);
+                      return;
                     });
-                    return;
-                  })
                 }}
               >
                 <div>Enter</div>
@@ -190,9 +205,37 @@ export default function Join() {
                 >
                   <div>Cancel</div>
                 </Button>
-                <Button click={() => {}}>
-                  <div>Send Again</div>
-                </Button>
+                {loadingSend || loadingVerify ? (
+                  <></>
+                ) : (
+                  <Button
+                    click={() => {
+                      if (loadingSend || loadingVerify) {
+                        return
+                      }
+
+                      setLoadingSend(true);
+                      setLoadingVerify(true);
+                      sendOTP(phone, "join")
+                        .then((res) => {
+                          setLoadingSend(false);
+                          setLoadingVerify(false);
+                        })
+                        .catch((err) => {
+                          setInputError(true);
+                          setError({
+                            active: true,
+                            message: err.toString(),
+                          });
+                          setLoadingVerify(false);
+                          setLoadingSend(false);
+                          return;
+                        });
+                    }}
+                  >
+                    <div>Send Again</div>
+                  </Button>
+                )}
                 <Input
                   error={inputError}
                   setError={setInputError}
@@ -202,12 +245,15 @@ export default function Join() {
                 />
                 <Button
                   type={ButtonType.CONTAINED}
-                  className={`plausible-event-name=send-message flex p-2 rounded-lg items-center justify-center ${
+                  className={`plausible-event-name=join-quest flex p-2 rounded-lg items-center justify-center ${
                     loadingVerify
-                      ? "bg-gray-500 hover:bg-gray-600"
+                      ? "bg-gray-500 cursor-default"
                       : "bg-green-500 hover:bg-green-600 cursor-pointer"
                   }`}
                   click={() => {
+                    if (loadingVerify) {
+                      return
+                    }
                     if (!OTP) {
                       setInputError(true);
                       setError({
@@ -217,10 +263,30 @@ export default function Join() {
                       return;
                     }
 
-                    setError({
-                      active: true,
-                      message: "Not finished yet. Sorry :( -Andrew",
-                    });
+                    setLoadingVerify(true);
+                    verifyOTP(phone, OTP, "join")
+                      .then(() => {
+                        setSuccess({
+                          active: true,
+                          message: "Succesfully joined.",
+                        });
+                        setTimeout(() => {
+                          router.push("/");
+                        }, 500);
+                      })
+                      .catch((err) => {
+                        setPage(0)
+                        setOTP("")
+                        setPhone("")
+                        setLoadingVerify(false);
+                        setLoadingSend(false);
+                        setInputError(true);
+                        setError({
+                          active: true,
+                          message: err.toString(),
+                        });
+                        return;
+                      });
                   }}
                 >
                   <div>Join The Daily Quest</div>
