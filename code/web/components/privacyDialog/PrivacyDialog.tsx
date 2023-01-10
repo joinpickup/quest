@@ -33,15 +33,6 @@ export default function PrivacyDialog({ close }: InfoDialogProps) {
                 If you opt in. We store an encrypted version of your phone
                 number.
               </li>
-              <li className="rounded-lg p-2 bg-gray-600">
-                Due to the nature of the app, we must store your phone number
-                till the message gets sent at the end of the day. This is a max
-                of 24 hours.
-              </li>
-              <li className="rounded-lg p-2 bg-gray-600">
-                We do not sell your phone numbers. Selling user data goes
-                against everything we stand for.
-              </li>
             </ul>
           </div>
         </div>
