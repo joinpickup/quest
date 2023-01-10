@@ -5,10 +5,10 @@ func IsMessageStatus(s string) bool {
 }
 
 type QuestMessage struct {
-	Fingerprint string `json:"fingerprint"`
-	PhoneHash   string `json:"phone_hash"`
-	Quest       string `json:"quest"`
-	Status      string `json:"status"`
+	Phone     string
+	MemberID  int32  `json:"member_id"`
+	PhoneHash string `json:"phone_hash"`
+	Status    string `json:"status"`
 }
 
 type QuestPool struct {
@@ -20,6 +20,11 @@ type QuestStatus struct {
 	Remaining   int32  `json:"remaining"`
 	Message     string `json:"message"`
 	PaymentLink string `json:"payment_link"`
+}
+
+type QuestMember struct {
+	ID        int32  `json:"id"`
+	PhoneHash string `json:"string"`
 }
 
 type VerificationBody struct {

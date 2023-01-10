@@ -21,6 +21,8 @@ func NewRouter() chi.Router {
 		r.Get("/health", controller.GetHealth)
 		r.Get("/status", controller.QuestStatus)
 		r.Post("/message", controller.SendMessage)
+		r.Post("/join", controller.Join)
+		r.Post("/leave", controller.Leave)
 		r.Route("/otp", func(r chi.Router) {
 			r.Post("/send", controller.SendOTP)
 			r.Post("/verify", controller.VerifyOTP)

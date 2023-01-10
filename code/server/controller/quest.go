@@ -11,6 +11,7 @@ import (
 	"github.com/joinpickup/quest-server/compute"
 	"github.com/joinpickup/quest-server/dal"
 	"github.com/joinpickup/quest-server/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetStatus() *models.QuestStatus {
@@ -30,8 +31,6 @@ func GetStatus() *models.QuestStatus {
 		logging.ErrorLogger.Println("No more community messages.")
 	}
 
-	status.CanMessage = false
-	status.Message = "Not done yet. Sorry :( - Andrew"
 	status.Remaining = remaining.Remaining
 	return &status
 }
@@ -59,20 +58,30 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// hash phone
-	// check whitelist
-	canSend := false
-	if !canSend {
-		logging.ErrorLogger.Println("That number has not joined the Daily Quest.")
-		http.Error(w, "That number has not joined the Daily Quest.", http.StatusBadRequest)
+	// check if member
+	found, err := compute.CheckIfMember(to)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if found == nil {
+		logging.ErrorLogger.Println("Not a member.")
+		http.Error(w, "Not a member.", http.StatusBadRequest)
 		return
 	}
 
 	// craft message
-	var message models.QuestMessage
+	message := models.QuestMessage{
+		Phone:     to,
+		PhoneHash: found.PhoneHash,
+		Status:    "queued",
+		MemberID:  found.ID,
+	}
 
 	// add message to db
-	err := compute.SendMessage(message)
+	err = compute.SendMessage(message)
 	if err != nil {
 		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -84,18 +93,71 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte{})
 }
 
-func WhiteList(w http.ResponseWriter, r *http.Request) {
+func Join(w http.ResponseWriter, r *http.Request) {
 	to := r.URL.Query().Get("phone")
 	if phonenumber.Parse(to, "US") == "" {
 		logging.ErrorLogger.Println("Please enter a valid phone number.")
 		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
 		return
 	}
-	// hash phone hash
-	to_hash := to
 
 	// code
-	err := dal.WhiteListPhone(to_hash)
+	found, err := compute.CheckIfMember(to)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if found != nil {
+		logging.ErrorLogger.Println("Already a member.")
+		http.Error(w, "Already a member.", http.StatusBadRequest)
+		return
+	}
+
+	// create hash
+	hashedTo, err := bcrypt.GenerateFromPassword([]byte(to), bcrypt.DefaultCost)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = dal.AddMember(string(hashedTo))
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Write([]byte{})
+}
+
+func Leave(w http.ResponseWriter, r *http.Request) {
+	to := r.URL.Query().Get("phone")
+	if phonenumber.Parse(to, "US") == "" {
+		logging.ErrorLogger.Println("Please enter a valid phone number.")
+		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
+		return
+	}
+
+	// code
+	found, err := compute.CheckIfMember(to)
+	if err != nil {
+		logging.ErrorLogger.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if found == nil {
+		logging.ErrorLogger.Println("Not a member.")
+		http.Error(w, "Not a member.", http.StatusBadRequest)
+		return
+	}
+
+	// code
+	err = dal.RemoveMember(found.ID)
 	if err != nil {
 		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)

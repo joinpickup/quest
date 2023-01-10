@@ -23,21 +23,25 @@ func GetQuestPool() (*models.QuestPool, error) {
 	return &pool, nil
 }
 
-func GetMessage(phone string) (*models.QuestMessage, error) {
+func GetMessage(id int32) (*models.QuestMessage, error) {
 	var message models.QuestMessage
 
 	// setup and run sql
 	selectSQL := `
-		select distinct phone, quest, status from "quest_message"
-		where phone = $1
+		select distinct phone_hash, member_id, status from "quest_message"
+		where member_id = $1
 	`
-	err := database.DB.QueryRow(selectSQL, phone).Scan(
+	err := database.DB.QueryRow(selectSQL, id).Scan(
 		&message.PhoneHash,
-		&message.Quest,
+		&message.MemberID,
 		&message.Status,
 	)
 
 	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -47,10 +51,10 @@ func GetMessage(phone string) (*models.QuestMessage, error) {
 func AddMessage(message models.QuestMessage) error {
 	// insert message
 	insertSQL := `
-		insert into "quest_message" ("fingerprint", "phone", "quest", "status")
-		values ($1, $2, $3, $4)
+		insert into "quest_message" ("phone_hash", "member_id", "status")
+		values ($1, $2, $3)
 	`
-	_, err := database.DB.Exec(insertSQL, message.Fingerprint, message.PhoneHash, message.Quest, message.Status)
+	_, err := database.DB.Exec(insertSQL, message.PhoneHash, message.MemberID, message.Status)
 	if err != nil {
 		return err
 	}
@@ -87,7 +91,7 @@ func AddMessagesToPool(amount int32) error {
 func GetMessages() ([]models.QuestMessage, error) {
 	var messages []models.QuestMessage
 	selectSQL := `
-		select fingerprint, phone, quest, status from "quest_message"
+		select phone_hash, member_id, status from "quest_message"
 		where status = 'queued'
 	`
 	rows, err := database.DB.Query(selectSQL)
@@ -100,9 +104,8 @@ func GetMessages() ([]models.QuestMessage, error) {
 
 		// get row
 		err := rows.Scan(
-			&message.Fingerprint,
 			&message.PhoneHash,
-			&message.Quest,
+			&message.MemberID,
 			&message.Status,
 		)
 		if err != nil {
@@ -127,18 +130,58 @@ func MarkMessageStatus(status string, message models.QuestMessage) error {
 	insertSQL := `
 		update "quest_message"
 		set status = $1
-		where phone = $2
+		where member_id = $2
 	`
-	_, err := database.DB.Exec(insertSQL, status, message.PhoneHash)
+	_, err := database.DB.Exec(insertSQL, status, message.MemberID)
 	return err
 }
 
-func WhiteListPhone(phone_hash string) error {
+func AddMember(phone_hash string) error {
 	// insert message
 	insertSQL := `
-		insert into "quest_whitelist" ("phone_hash")
+		insert into "quest_member" ("phone_hash")
 		values ($1)
 	`
 	_, err := database.DB.Exec(insertSQL, phone_hash)
 	return err
+}
+
+func RemoveMember(id int32) error {
+	// insert message
+	deleteSQL := `
+		delete from "quest_member"
+		where id = $1
+	`
+	_, err := database.DB.Exec(deleteSQL, id)
+	return err
+}
+
+func GetAllMembers() ([]models.QuestMember, error) {
+	members := []models.QuestMember{}
+
+	selectSQL := `
+		select id, phone_hash from "quest_member"
+	`
+	rows, err := database.DB.Query(selectSQL)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var member models.QuestMember
+
+		// get row
+		err := rows.Scan(
+			&member.ID,
+			&member.PhoneHash,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		// add row to roles
+		members = append(members, member)
+	}
+	return members, nil
 }
