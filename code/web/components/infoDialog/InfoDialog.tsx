@@ -39,7 +39,7 @@ export default function InfoDialog({ close }: InfoDialogProps) {
                 There is one hand picked prompt a day.
               </li>
               <li className="rounded-lg p-2 bg-gray-600">
-                Enter the person in your life who best matches the question.
+                Enter the person in your life who best matches the prompt.
               </li>
               <li className="rounded-lg p-2 bg-gray-600">
                 The day starts with{" "}
@@ -52,20 +52,17 @@ export default function InfoDialog({ close }: InfoDialogProps) {
                 message.
               </li>
               <li className="rounded-lg p-2 bg-gray-600">
-                Messages get sent out anonymously at near end of the day.
+                Messages get sent out from the Daily Quest number once per day.
               </li>
             </ul>
             <div className="text-xl">Example Message That We Send</div>
             <ul className="flex flex-col space-y-2">
               <li className="rounded-lg p-2 bg-gray-600">
+                You were chosen for today's Daily Quest. 
+                <br />
+                <br />
+                Go to https://quest.joinpickup.com to see the prompt.
                 Someone chose you for the Daily Quest.
-                <br />
-                <br />
-                Someone who you feel the most comfortable around.
-                <br />
-                <br />
-                Go to quest.joinpickup.com for information on how to participate
-                tomorrow.
               </li>
             </ul>
           </div>
