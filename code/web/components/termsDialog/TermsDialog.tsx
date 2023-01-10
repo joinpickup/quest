@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import Badge from "../../ACE/Badge/Badge";
 import Button from "../../ACE/Button/Button";
@@ -35,9 +36,8 @@ export default function TermsDialog({ close }: InfoDialogProps) {
               </li>
               <li className="rounded-lg p-2 bg-gray-600">
                 Opt out{" "}
-                <a href="/leave" className="hover:underline text-orange-400">
-                  here.
-                </a>
+                <Link href="/leave" className="hover:underline text-orange-400">here.</Link>
+                  
               </li>
               <li className="rounded-lg p-2 bg-gray-600">
                 That{"'"}s it, it{"'"}s pretty simple.
