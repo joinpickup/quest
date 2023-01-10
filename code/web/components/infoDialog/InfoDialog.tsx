@@ -58,11 +58,11 @@ export default function InfoDialog({ close }: InfoDialogProps) {
             <div className="text-xl">Example Message That We Send</div>
             <ul className="flex flex-col space-y-2">
               <li className="rounded-lg p-2 bg-gray-600">
-                You were chosen for today{"'"}s Daily Quest. 
+                You were chosen for today{"'"}s Daily Quest.
                 <br />
                 <br />
-                Go to https://quest.joinpickup.com to see the prompt.
-                Someone chose you for the Daily Quest.
+                Go to https://quest.joinpickup.com to see the prompt. Someone
+                chose you for the Daily Quest.
               </li>
             </ul>
           </div>

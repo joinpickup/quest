@@ -1,8 +1,12 @@
+import { getCookie } from "cookies-next";
 import { VerifyBody } from "../model/quest";
 
 export async function addMessage(phone: string) {
   const res = await fetch(`/api/proxy/quest/message?phone=${phone}`, {
     method: "POST",
+    headers: {
+      Key: "1p5g4NsGXwFS6MQT",
+    },
   });
 
   if (res.status != 200) {
@@ -11,9 +15,12 @@ export async function addMessage(phone: string) {
 }
 
 export async function sendOTP(phone: string, type: string) {
-  const res = await fetch(`/api/proxy/quest/otp/send?phone=${phone}&type=${type}`, {
-    method: "POST",
-  });
+  const res = await fetch(
+    `/api/proxy/quest/otp/send?phone=${phone}&type=${type}`,
+    {
+      method: "POST",
+    }
+  );
 
   if (res.status != 200) {
     return Promise.reject(await res.text());
@@ -38,23 +45,17 @@ export async function verifyOTP(phone: string, code: string, type: string) {
   }
 
   if (type == "join") {
-    res = await fetch(
-      `/api/proxy/quest/join?phone=${phone}`,
-      {
-        method: "POST",
-      }
-    );
+    res = await fetch(`/api/proxy/quest/join?phone=${phone}`, {
+      method: "POST",
+    });
 
     if (res.status != 200) {
       return Promise.reject(await res.text());
     }
   } else {
-    res = await fetch(
-      `/api/proxy/quest/leave?phone=${phone}`,
-      {
-        method: "POST",
-      }
-    );
+    res = await fetch(`/api/proxy/quest/leave?phone=${phone}`, {
+      method: "POST",
+    });
 
     if (res.status != 200) {
       return Promise.reject(await res.text());

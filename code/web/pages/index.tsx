@@ -1,3 +1,4 @@
+import { loadGetInitialProps } from "next/dist/shared/lib/utils";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -38,7 +39,7 @@ export default function Home() {
         <title>The Daily Quest</title>
         <meta
           name="description"
-          content="A daily challenge to make the lives of the people around you better."
+          content="A daily challenge to improve the lives of those around you."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
@@ -230,6 +231,50 @@ export default function Home() {
                     </svg>
                     <div>The Daily Quest</div>
                     <Badge text="Beta"></Badge>
+                  </div>
+                </Button>
+              </div>
+              <div>
+                <Button
+                  click={() => {
+                    if (navigator && navigator.share) {
+                      navigator
+                        .share({
+                          title: "Join The Daily Quest",
+                          text: "Join The Daily Quest! A daily challenge to improve the lives of those around you.",
+                          url: "https://quest.joinpickup.com/join",
+                        }).catch(err => {})
+                    } else {
+                      navigator.clipboard
+                        .writeText(
+                          "Join The Daily Quest! A daily challenge to improve the lives of those around you. https://quest.joinpickup.com/join"
+                        )
+                        .then(() => {
+                          setSuccess({
+                            active: true,
+                            message: "Copied to clipboard.",
+                          });
+                        })
+                        .catch((err) => {
+                          setError({
+                            active: true,
+                            message: "Error copying to clipboard.",
+                          });
+                        });
+                    }
+                  }}
+                >
+                  <div className="flex space-x-2 items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                    </svg>
+
+                    <div>Invite</div>
                   </div>
                 </Button>
               </div>

@@ -75,7 +75,7 @@ export default function Leave() {
                 }`}
                 click={() => {
                   if (loadingSend) {
-                    return
+                    return;
                   }
 
                   if (!phone) {
@@ -92,15 +92,15 @@ export default function Leave() {
                   sendOTP(phone, "leave")
                     .then((res) => {
                       // go to next page with terms dialog set and reset state
-                      setOTP("")
+                      setOTP("");
                       setPage(page + 1);
                       setTermsDialog(true);
                       setLoadingSend(false);
                       setLoadingVerify(false);
                     })
                     .catch((err) => {
-                      setOTP("")
-                      setPhone("")
+                      setOTP("");
+                      setPhone("");
                       setInputError(true);
                       setError({
                         active: true,
@@ -211,7 +211,7 @@ export default function Leave() {
                   <Button
                     click={() => {
                       if (loadingSend || loadingVerify) {
-                        return
+                        return;
                       }
 
                       setLoadingSend(true);
@@ -252,7 +252,7 @@ export default function Leave() {
                   }`}
                   click={() => {
                     if (loadingVerify) {
-                      return
+                      return;
                     }
                     if (!OTP) {
                       setInputError(true);
@@ -275,9 +275,9 @@ export default function Leave() {
                         }, 500);
                       })
                       .catch((err) => {
-                        setPage(0)
-                        setOTP("")
-                        setPhone("")
+                        setPage(0);
+                        setOTP("");
+                        setPhone("");
                         setLoadingVerify(false);
                         setLoadingSend(false);
                         setInputError(true);

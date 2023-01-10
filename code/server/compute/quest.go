@@ -36,8 +36,8 @@ func SendMessage(message models.QuestMessage) error {
 	}
 
 	if found != nil {
-		dal.DecrementPool()
-		return nil
+		logging.ErrorLogger.Println("Message already sent to member today.")
+		return fmt.Errorf("message already sent to member today")
 	}
 
 	// queue the message
