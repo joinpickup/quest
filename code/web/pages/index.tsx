@@ -243,7 +243,8 @@ export default function Home() {
                           title: "Join The Daily Quest",
                           text: "Join The Daily Quest! A daily challenge to improve the lives of those around you.",
                           url: "https://quest.joinpickup.com/join",
-                        }).catch(err => {})
+                        })
+                        .catch((err) => {});
                     } else {
                       navigator.clipboard
                         .writeText(
