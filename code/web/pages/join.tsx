@@ -183,7 +183,7 @@ export default function Join() {
                         />
                       </svg>
                       <div>The Daily Quest</div>
-                      <Badge text="Alpha"></Badge>
+                      <Badge text="Beta"></Badge>
                     </div>
                   </Button>
                 </div>
