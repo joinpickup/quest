@@ -27,6 +27,12 @@ func BuildScheduler() *gocron.Scheduler {
 			logging.ErrorLogger.Println(err)
 		}
 		logging.InfoLogger.Println("Reset message pool.")
+
+		err = dal.PurgeMessages()
+		if err != nil {
+			logging.ErrorLogger.Println(err)
+		}
+		logging.InfoLogger.Println("Purge messages.")
 	})
 
 	return s
