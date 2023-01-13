@@ -146,7 +146,7 @@ export default function Home() {
               </Button>
             </div>
             <div className="text-lg flex justify-between">
-              <div>Community messages remianing</div>
+              <div>Community messages remaining</div>
               <div className="text-orange-400">{status?.remaining}</div>
             </div>
             <div className="flex justify-center space-x-2">
