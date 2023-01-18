@@ -9,6 +9,7 @@ export interface QuestStatus {
   can_message: boolean;
   remaining: number;
   message: string;
+  member_total: string;
   payment_link: string;
 }
 

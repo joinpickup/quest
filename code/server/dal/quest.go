@@ -189,3 +189,21 @@ func GetAllMembers() ([]models.QuestMember, error) {
 	}
 	return members, nil
 }
+
+func GetMemberTotal() (int32, error) {
+	var total int32
+
+	// setup and run sql
+	selectSQL := `
+		select count("id") from quest_member;
+	`
+	err := database.DB.QueryRow(selectSQL).Scan(
+		&total,
+	)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return total, nil
+}

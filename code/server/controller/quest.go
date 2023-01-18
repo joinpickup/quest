@@ -17,7 +17,8 @@ import (
 
 func GetStatus() *models.QuestStatus {
 	var status models.QuestStatus
-	remaining, err := dal.GetQuestPool()
+	remaining, _ := dal.GetQuestPool()
+	total, err := dal.GetMemberTotal()
 	status.PaymentLink = support.TrimQuotes(os.Getenv("STRIPE_PAYMENT_LINK"))
 	status.CanMessage = true
 	status.Message = ""
@@ -33,6 +34,7 @@ func GetStatus() *models.QuestStatus {
 	}
 
 	status.Remaining = remaining.Remaining
+	status.MemberTotal = total
 	return &status
 }
 

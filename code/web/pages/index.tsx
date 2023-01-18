@@ -146,6 +146,10 @@ export default function Home() {
               </Button>
             </div>
             <div className="text-lg flex justify-between">
+              <div>Total members</div>
+              <div className="text-orange-400">{status?.member_total}</div>
+            </div>
+            <div className="text-lg flex justify-between">
               <div>Community messages remaining</div>
               <div className="text-orange-400">{status?.remaining}</div>
             </div>
