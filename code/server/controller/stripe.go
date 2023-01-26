@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/dal"
 	"github.com/stripe/stripe-go"
@@ -21,7 +20,6 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -32,7 +30,6 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 	event, err := webhook.ConstructEvent(body, r.Header.Get("Stripe-Signature"), webhookKey)
 
 	if err != nil {
-		logging.ErrorLogger.Printf("Error verifying webhook signature: %v\n", err)
 		http.Error(w, fmt.Sprintf("Error verifying webhook signature: %v", err), http.StatusBadRequest)
 		return
 	}
@@ -41,14 +38,12 @@ func CheckoutCallback(w http.ResponseWriter, r *http.Request) {
 		var charge stripe.Charge
 		err := json.Unmarshal(event.Data.Raw, &charge)
 		if err != nil {
-			logging.ErrorLogger.Println("Could no parse webhook " + err.Error())
 			http.Error(w, "Could not parse webhook + "+err.Error(), http.StatusBadRequest)
 			return
 		}
 		amount := charge.Amount / 10
 		err = dal.AddMessagesToPool(int32(amount))
 		if err != nil {
-			logging.ErrorLogger.Println(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

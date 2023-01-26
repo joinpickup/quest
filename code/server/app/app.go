@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/go-chi/chi/v5"
 	chi_m "github.com/go-chi/chi/v5/middleware"
+	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/quest-server/controller"
 )
 
@@ -11,6 +12,7 @@ func NewRouter() chi.Router {
 
 	// establish middleware
 	r.Use(chi_m.Logger)
+	r.Use(logging.LoggerMiddleware(&logging.Logger))
 
 	r.Get("/", controller.GetHealth)
 

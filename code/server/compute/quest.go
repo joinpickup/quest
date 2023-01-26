@@ -31,40 +31,35 @@ func SendMessage(message models.QuestMessage) error {
 	// before sending the message, do one more check to make sure that the message hasn't been completed by another process
 	found, err := dal.GetMessage(message.MemberID)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		return err
 	}
 
 	if found != nil {
-		logging.ErrorLogger.Println("Message already sent to member today.")
-		return fmt.Errorf("message already sent to member today")
+		return fmt.Errorf("someone already sent a message to that member today")
 	}
 
 	// queue the message
 	err = dal.AddMessage(message)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		return err
 	}
 
 	// actually send the message
 	_, err = client.Api.CreateMessage(params)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		err := dal.MarkMessageStatus("failed", message)
 		if err != nil {
-			logging.ErrorLogger.Println(err.Error())
+			logging.Logger.Error().Err(err).Stack().Msg("")
 		}
 		return err
 	}
 
-	logging.InfoLogger.Println("Successfully sent message to " + message.PhoneHash)
+	logging.Logger.Info().Msg("Successfully sent message to " + message.PhoneHash)
 	err = dal.MarkMessageStatus("sent", message)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		err = dal.MarkMessageStatus("failed", message)
 		if err != nil {
-			logging.ErrorLogger.Println(err.Error())
+			logging.Logger.Error().Err(err).Stack().Msg("")
 		}
 		return err
 	}

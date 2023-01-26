@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/dongri/phonenumber"
-	"github.com/joinpickup/middleware-go/logging"
 	"github.com/joinpickup/middleware-go/support"
 	"github.com/joinpickup/quest-server/compute"
 	"github.com/joinpickup/quest-server/dal"
@@ -26,11 +25,9 @@ func GetStatus() *models.QuestStatus {
 	if err != nil {
 		status.CanMessage = false
 		status.Message = "Error connecting to the database. Blame Andrew."
-		logging.ErrorLogger.Println(err.Error())
 	} else if remaining.Remaining == 0 {
 		status.CanMessage = false
 		status.Message = "No more community messages."
-		logging.ErrorLogger.Println("No more community messages.")
 	}
 
 	status.Remaining = remaining.Remaining
@@ -48,7 +45,6 @@ func QuestStatus(w http.ResponseWriter, r *http.Request) {
 func SendMessage(w http.ResponseWriter, r *http.Request) {
 	_, err := middleware.ValidateToken(r)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -56,14 +52,12 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 	// check app status
 	status := GetStatus()
 	if !status.CanMessage {
-		logging.ErrorLogger.Println(status.Message)
 		http.Error(w, status.Message, http.StatusBadRequest)
 		return
 	}
 
 	to := r.URL.Query().Get("phone")
 	if phonenumber.Parse(to, "US") == "" {
-		logging.ErrorLogger.Println("Please enter a valid phone number.")
 		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
 		return
 	}
@@ -71,14 +65,12 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 	// check if member
 	found, err := compute.CheckIfMember(to)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if found == nil {
-		logging.ErrorLogger.Println("Not a member.")
-		http.Error(w, "Not a member.", http.StatusBadRequest)
+		http.Error(w, "That person is not a member.", http.StatusBadRequest)
 		return
 	}
 
@@ -93,7 +85,6 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 	// add message to db
 	err = compute.SendMessage(message)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -106,14 +97,12 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 func Join(w http.ResponseWriter, r *http.Request) {
 	_, err := middleware.ValidateToken(r)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	to := r.URL.Query().Get("phone")
 	if phonenumber.Parse(to, "US") == "" {
-		logging.ErrorLogger.Println("Please enter a valid phone number.")
 		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
 		return
 	}
@@ -121,28 +110,24 @@ func Join(w http.ResponseWriter, r *http.Request) {
 	// code
 	found, err := compute.CheckIfMember(to)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if found != nil {
-		logging.ErrorLogger.Println("Already a member.")
-		http.Error(w, "Already a member.", http.StatusBadRequest)
+		http.Error(w, "That person is already a member.", http.StatusBadRequest)
 		return
 	}
 
 	// create hash
 	hashedTo, err := bcrypt.GenerateFromPassword([]byte(to), bcrypt.DefaultCost)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = dal.AddMember(string(hashedTo))
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -154,14 +139,12 @@ func Join(w http.ResponseWriter, r *http.Request) {
 func Leave(w http.ResponseWriter, r *http.Request) {
 	_, err := middleware.ValidateToken(r)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	to := r.URL.Query().Get("phone")
 	if phonenumber.Parse(to, "US") == "" {
-		logging.ErrorLogger.Println("Please enter a valid phone number.")
 		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
 		return
 	}
@@ -169,21 +152,18 @@ func Leave(w http.ResponseWriter, r *http.Request) {
 	// code
 	found, err := compute.CheckIfMember(to)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if found == nil {
-		logging.ErrorLogger.Println("Not a member.")
-		http.Error(w, "Not a member.", http.StatusBadRequest)
+		http.Error(w, "That person is not a member.", http.StatusBadRequest)
 		return
 	}
 
 	// code
 	err = dal.RemoveMember(found.ID)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

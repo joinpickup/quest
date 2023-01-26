@@ -19,20 +19,20 @@ func BuildScheduler() *gocron.Scheduler {
 		totalInt, err := strconv.ParseInt(total, 10, 32)
 		if err != nil {
 			totalInt = 1000
-			logging.ErrorLogger.Println(err)
+			logging.Logger.Error().Stack().Err(err).Msg("")
 		}
 
 		err = dal.ResetPool(int32(totalInt))
 		if err != nil {
-			logging.ErrorLogger.Println(err)
+			logging.Logger.Error().Stack().Err(err).Msg("")
 		}
-		logging.InfoLogger.Println("Reset message pool.")
+		logging.Logger.Info().Msg("Reset message pool.")
 
 		err = dal.PurgeMessages()
 		if err != nil {
-			logging.ErrorLogger.Println(err)
+			logging.Logger.Error().Stack().Err(err).Msg("")
 		}
-		logging.InfoLogger.Println("Purge messages.")
+		logging.Logger.Info().Msg("Purge messages.")
 	})
 
 	return s

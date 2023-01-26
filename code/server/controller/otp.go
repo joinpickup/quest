@@ -19,7 +19,6 @@ import (
 func SendOTP(w http.ResponseWriter, r *http.Request) {
 	_, err := middleware.ValidateToken(r)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -29,13 +28,11 @@ func SendOTP(w http.ResponseWriter, r *http.Request) {
 	to := r.URL.Query().Get("phone")
 	otp_type := r.URL.Query().Get("type")
 	if phonenumber.Parse(to, "US") == "" {
-		logging.ErrorLogger.Println("Please enter a valid phone number.")
 		http.Error(w, "Please enter a valid phone number.", http.StatusBadRequest)
 		return
 	}
 
 	if otp_type != "join" && otp_type != "leave" {
-		logging.ErrorLogger.Println("Please enter a valid OTP type.")
 		http.Error(w, "Please enter a valid OTP type.", http.StatusBadRequest)
 		return
 	}
@@ -43,27 +40,23 @@ func SendOTP(w http.ResponseWriter, r *http.Request) {
 	// code
 	found, err := compute.CheckIfMember(to)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if found != nil && otp_type == "join" {
-		logging.ErrorLogger.Println("Already a member.")
-		http.Error(w, "Already a member.", http.StatusBadRequest)
+		http.Error(w, "That person is already a member.", http.StatusBadRequest)
 		return
 	}
 
 	if found == nil && otp_type == "leave" {
-		logging.ErrorLogger.Println("Not a member.")
-		http.Error(w, "Not a member.", http.StatusBadRequest)
+		http.Error(w, "That person is not a member.", http.StatusBadRequest)
 		return
 	}
 
 	// code
 	code, err := dal.InsertPhoneCode(to)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -80,12 +73,11 @@ func SendOTP(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := client.Api.CreateMessage(params)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else {
 		response, _ := json.Marshal(*resp)
-		logging.InfoLogger.Println("Response: " + string(response))
+		logging.Logger.Info().Msg("Response: " + string(response))
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -95,7 +87,6 @@ func SendOTP(w http.ResponseWriter, r *http.Request) {
 func VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	_, err := middleware.ValidateToken(r)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -103,13 +94,11 @@ func VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	to := r.URL.Query().Get("phone")
 	code := r.URL.Query().Get("code")
 	if code == "" {
-		logging.ErrorLogger.Println("Please enter a valid code...")
 		http.Error(w, "Please enter a valid code...", http.StatusBadRequest)
 		return
 	}
 
 	if to == "" {
-		logging.ErrorLogger.Println("Please enter a phone number...")
 		http.Error(w, "Please enter a phone number...", http.StatusBadRequest)
 		return
 	}
@@ -117,7 +106,6 @@ func VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	// code
 	valid, err := dal.VerifyPhoneCode(to, code)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -126,7 +114,6 @@ func VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	body.Valid = valid
 	bodyStr, err := json.Marshal(body)
 	if err != nil {
-		logging.ErrorLogger.Println(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

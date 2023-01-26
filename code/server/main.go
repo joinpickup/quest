@@ -24,7 +24,6 @@ func main() {
 
 	// init databse connection
 	database.Init()
-
 	r := app.NewRouter()
 
 	// run cron jobs
@@ -32,12 +31,12 @@ func main() {
 	s.StartAsync()
 
 	// listen on port
-	fmt.Printf("Server running on port: %d\n", port)
+	logging.Logger.Info().Msg(fmt.Sprintf("Server running on port: %d\n", port))
 	if support.SSL {
-		fmt.Println("Production Server")
+		logging.Logger.Info().Msg("Production Server")
 		log.Panic(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
 	} else {
-		fmt.Println("Development Server")
+		logging.Logger.Info().Msg("Development Server")
 		log.Panic(http.ListenAndServeTLS(fmt.Sprintf(":%d", port), "./ssl/joinpickup-dev.cer.pem", "./ssl/joinpickup-dev.key.pem", r))
 	}
 }
